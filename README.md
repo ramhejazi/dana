@@ -1,6 +1,6 @@
 dana
 =====
-dana is a simple MySQL migration library and a CLI app written in JavaScript (node.js). It works by **tracking changes** in [models]() and **auto-generating** and executing [migration files]().
+dana is a simple MySQL migration library and a CLI app written in JavaScript (node.js). It works by **tracking changes** in models and **auto-generating** and executing migration files.
 
 > dana currently is a beta software!
 
