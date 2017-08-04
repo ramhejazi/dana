@@ -7,8 +7,8 @@ dana is a simple MySQL migration library and a CLI app written in JavaScript (no
 ## Table of Contents:
 - [Installation](#installation)
 - [Notable Features](#notable-features-and-limitations)
-- [Getting Started](https://github.com/ramhejazi/blob/master/docs/getting_started.md)
-- [Datatypes](https://github.com/ramhejazi/blob/master/docs/datatypes.md)
+- [Getting Started](https://github.com/ramhejazi/dana/blob/master/docs/getting_started.md)
+- [Datatypes](https://github.com/ramhejazi/dana/blob/master/docs/datatypes.md)
 - [CLI Commands](#cli-commands)
 
 ## Installation
