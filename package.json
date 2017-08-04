@@ -10,25 +10,24 @@
     "mkdoc": "node ./src/scripts/docs.js"
   },
   "repository": {
-	  "type": "git",
-	  "url": "https://github.com/ramhejazi/dana.git"
+    "type": "git",
+    "url": "https://github.com/ramhejazi/dana.git"
   },
   "bugs": {
-	  "url": "https://github.com/ramhejazi/dana/issues"
+    "url": "https://github.com/ramhejazi/dana/issues"
   },
   "keywords": [
-	  "migration",
-	  "sql",
-	  "mysql",
-	  "ddl",
-	  "auto-generating",
-	  "database",
-	  "table"
+    "migration",
+    "sql",
+    "mysql",
+    "ddl",
+    "auto-generating",
+    "database",
+    "table"
   ],
   "bin": {
     "dana": "./bin/cli.js"
   },
-
   "dependencies": {
     "bluebird": "^3.5.0",
     "chalk": "^1.1.3",
@@ -40,6 +39,7 @@
     "liftoff": "^2.3.0",
     "lodash": "^4.17.4",
     "minimist": "^1.2.0",
+    "mitra": "0.0.1",
     "moment": "^2.18.1",
     "mysql2": "^1.3.5",
     "shortid": "^2.2.8",
