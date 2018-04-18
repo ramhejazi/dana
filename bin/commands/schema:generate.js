@@ -10,8 +10,8 @@ module.exports = {
 			return this.help();
 		}
 		return util.getDanaIns()
-			.schema
-			.createModels(tableNames, !!this.verbose)
-			.catch(util.exit.bind(util));
+				.schema
+				.createModels(tableNames, !!this.verbose)
+				.catch(util.exit.bind(util));
 	}
 };

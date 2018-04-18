@@ -6,9 +6,9 @@ module.exports = {
 	],
 	handler(argv, util) {
 		return util.getDanaIns()
-			.migrate
-			.run('rollback', !!this.verbose)
-			.then(util.logMessages)
-			.catch(util.exit.bind(util));
+				.migrate
+				.run('rollback', !!this.verbose)
+				.then(util.logMessages)
+				.catch(util.exit.bind(util));
 	}
 };

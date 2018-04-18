@@ -5,7 +5,10 @@ module.exports = {
 		['-v, --verbose', 'Logs all main actions.']
 	],
 	handler(argv, util) {
-		const dana = util.getDanaIns();
-		return dana.migrate.run('make', true).then(util.logMessages).catch(util.exit.bind(util));
+		return util.getDanaIns()
+				.migrate
+				.run('make', true)
+				.then(util.logMessages)
+				.catch(util.exit.bind(util));
 	}
 };
