@@ -1,7 +1,7 @@
 const helpers = require('../src/lib/helpers');
-const vPath = require('path').join(__dirname, '../src/validators');
+const validatorsDirPath = require('path').join(__dirname, '../src/validators');
 
-helpers.readDirSync(vPath).forEach((file) => {
+helpers.readDirSync(validatorsDirPath).forEach((file) => {
 	const { src, name } = file;
 	const validator = src.handler;
 	const {i: invalids, v: valids} = src;
