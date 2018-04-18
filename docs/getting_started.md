@@ -1,5 +1,5 @@
 ## Getting Started
-dana is a npm package. For using the library the package should be installed both locally and globally.
+dana is a npm package. For using the library, the package should be installed both locally and globally.
 
 ```bash
 # installing as an app dependency
@@ -11,7 +11,7 @@ $ npm i dana -g
 After installing the package, you can execute the `dana init` command in the root directory of the project, for creating dana configuration file (`danafile.js`) and it's required directories (`models` and `migrations`):
 
 ### Configuration
-`danafile.js` is name of dana confugarion file. dana uses `liftoff` package for loading the file. `dana init` command creates a basic configuration file with these contents:
+`danafile.js` is name of dana configuration file. dana uses node `liftoff` package for loading the file. `dana init` command creates a basic configuration file with these contents:
 
 ```js
 module.exports = {
