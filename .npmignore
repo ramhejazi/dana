@@ -1,2 +1,5 @@
 test
 node_modules
+.vagrant
+.git
+*.log
