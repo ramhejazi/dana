@@ -12,7 +12,7 @@ const indexColLengthRegex = /\((\d+)\)$/;
 const datatypes = require('../datatypes');
 const assign = Object.assign;
 
-const notes = {
+const warnings = {
 	'blob_text_missing_prefix': `
 		"When you index a BLOB or TEXT column, you must specify a prefix length for the index."
 		source: https://dev.mysql.com/doc/refman/5.7/en/column-indexes.html
@@ -36,9 +36,11 @@ module.exports = {
 				columns: ['foo']
 			}],
 			attributes: {
-				columns: {
-					foo: assign({}, datatypes.varchar),
-					bar: assign({}, datatypes.char),
+				schema: {
+					columns: {
+						foo: assign({}, datatypes.varchar),
+						bar: assign({}, datatypes.char),
+					}
 				}
 			}
 		}
@@ -53,10 +55,12 @@ module.exports = {
 				columns: ['baz']
 			}],
 			attributes: {
-				columns: {
-					baz: assign({}, datatypes.int),
-					foo: assign({}, datatypes.varchar),
-					bar: assign({}, datatypes.char),
+				schema: {
+					columns: {
+						baz: assign({}, datatypes.int),
+						foo: assign({}, datatypes.varchar),
+						bar: assign({}, datatypes.char),
+					}
 				}
 			}
 		}
@@ -94,16 +98,16 @@ module.exports = {
 					return `Index has duplicate column: "${indexCol}"`;
 				}
 				if ( !columns.includes(colName) ) {
-					return `Column specficied for indexing doesn't exist: "${indexCol}"`;
+					return `Column name specified for indexing doesn't exist: "${indexCol}"`;
 				}
 				let targetCol = columns[colName];
 				let targetColType = getType(targetCol) === 'object' ? targetCol.type : targetCol;
 				if ( targetColType && indexRequiredLengthTypes.includes(targetColType) && !colLength ) {
-					return notes.fulltext_missing_length_notice;
+					return warnings.fulltext_missing_length_notice;
 				}
 				if ( index.type === 'fulltext' ) {
 					if ( targetColType && !fullTextTypes.includes(targetColType) ) {
-						return notes.fulltext_unsupported_type;
+						return warnings.fulltext_unsupported_type;
 					}
 				}
 			}
