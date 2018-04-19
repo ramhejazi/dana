@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const mitra = require('mitra');
-const datatypes = require('../src/datatypes');
+const datatypes = require('../../src/datatypes');
 
 describe('Datatype', function() {
 	_.each(datatypes, function(dt, key) {

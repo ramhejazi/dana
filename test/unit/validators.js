@@ -1,5 +1,5 @@
-const helpers = require('../src/lib/helpers');
-const validatorsDirPath = require('path').join(__dirname, '../src/validators');
+const helpers = require('../../src/lib/helpers');
+const validatorsDirPath = require('path').join(__dirname, '../../src/validators');
 
 helpers.readDirSync(validatorsDirPath).forEach((file) => {
 	const { src, name } = file;
