@@ -6,7 +6,7 @@
   "license": "MIT",
   "main": "src/dana.js",
   "scripts": {
-    "test": "./node_modules/mocha/bin/mocha test",
+    "unit_test": "./node_modules/mocha/bin/mocha test/unit",
     "mkdoc": "node ./src/scripts/docs.js"
   },
   "repository": {
