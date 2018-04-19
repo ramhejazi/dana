@@ -1,4 +1,4 @@
-#! /usr/bin/env bash
+#!/bin/bash
 
 set -x
 
@@ -31,15 +31,13 @@ echo -e "--- Installing nodejs v8 ---"
 curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash - >> $LOG_FILE 2>&1
 apt-get install -y nodejs >> /vagrant/vm_build.log 2>&1
 
-curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
-echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
-apt-get update && apt-get install yarn
-
-echo "yarn version is ${yarn --version}"
+# curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+# echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+# apt-get update && apt-get install yarn
 
 cd /vagrant
 
 if [[ -s /vagrant/package.json ]] ;then
   echo "--- Installing node modules... ---"
-  sudo -u vagrant -H sh -c "yarn install" >> $LOG_FILE 2>&1
+  sudo -u vagrant -H sh -c "npm install" >> $LOG_FILE 2>&1
 fi
