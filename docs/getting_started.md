@@ -1,14 +1,18 @@
 ## Getting Started
-dana is a npm package. For using the library, the package should be installed both locally and globally.
+dana is a command-like program written in JavaScript (node.js) and can be installed by using npm package manager. The package can be installed both locally and globally.
 
 ```bash
 # installing as an app dependency
 $ npm i dana --save
-# installing globally as CLI app
-$ npm i dana -g
+# installing globally
+$ npm i -g dana
 ```
 
-After installing the package, you can execute the `dana init` command in the root directory of the project, for creating dana configuration file (`danafile.js`) and it's required directories (`models` and `migrations`):
+After installing the package, you can execute the `dana init` command in the root directory of the project. The commands creates dana configuration file (`danafile.js`) and it's required directories (`models` and `migrations`):
+
+```bash
+dana init
+```
 
 ### Configuration
 `danafile.js` is name of dana configuration file. dana uses node `liftoff` package for loading the file. `dana init` command creates a basic configuration file with these contents:
@@ -37,7 +41,7 @@ module.exports = {
 ```
 ``--env`` flag can be used for setting environment:
 ```bash
-dana migrate:latest --env production
+$ dana migrate:latest --env production
 ```
 
 ## Models
@@ -50,13 +54,12 @@ For each table a model file (in `models` directory) should be created. dana uses
 - `schema.indexes` (array) - an array of objects. Each object is treated as an SQL index. See [Defining Indexes]() section.
 - `schema.columns` (required|object) - See [Defining Columns ]() section.
 
-
 ### Creating Models
-You can create models both manually and by using the `dana generate` command. Since each model **must** have a unique `_fid` property it's recommended to use the `generate` command for creating models. The command generates an unique id for each generated model.
+You can create models both manually and by using the `dana schema:generate` command. Since each model **must** have a unique `_fid` property it's recommended to use the `schema:generate` command for creating models. The command generates an unique id for each generated model.
 
 The following command creates 2 model files (`posts.js` and `tags.js`):
 ```bash
-dana generate posts tags
+$ dana schema:generate posts tags
 ```
 
 ### Defining Columns
@@ -69,6 +72,7 @@ columns: {
   'column_name': { type: 'varchar', nullable: false }
 }
 ```
+
 ### Defining Indexes
 For creating indexes you can set the `schema.indexes` property of the model to an array. Each element of this array must be an object with these properties:
 - `type` (required|string) - type of the index, possible values are: `index`, `fulltext`, `unique`
