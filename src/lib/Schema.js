@@ -1,13 +1,13 @@
-const fs = require('fs-extra');
-const path = require('path');
-const shortid = require('shortid');
-const _ = require('lodash');
-const Promise = require('bluebird');
-const log = require('./log');
-const helpers = require('./helpers');
-const Table = require('./Table');
-const { DanaError } = require('../errors');
-const tildify = require('tildify');
+const fs = require('fs-extra')
+ 		, path = require('path')
+ 		, shortid = require('shortid')
+ 		, _ = require('lodash')
+ 		, Promise = require('bluebird')
+ 		, log = require('./log')
+ 		, helpers = require('./helpers')
+ 		, Table = require('./Table')
+ 		, { DanaError } = require('../errors')
+ 		, tildify = require('tildify');
 
 module.exports = class Schema {
 
@@ -58,13 +58,25 @@ module.exports = class Schema {
 			log.info(`${tableNames.length} model(s) will be created: \n - ${tableNames.join('\n - ')}`);
 		}
 
-		return this._getCurrentTableNames(verbose).then(currentTableNames => {
-			const duplicates = tableNames.filter(name => currentTableNames.includes(name));
-			if (duplicates.length) {
+		return this._getCurrentTableNames(verbose).then(currentTables => {
+			const currentTableNames = _.map(currentTables, 'tableName');
+			const currentModelFilenames = _.map(currentTables, 'filename');
+
+			const duplicateTableNames = tableNames.filter(name => currentTableNames.includes(name));
+			if (duplicateTableNames.length) {
 				throw new DanaError(
-					`There are existent files for following table names: ${duplicates.join(', ')}`
+					`There are existent model files for following table names: ${duplicateTableNames.join(', ')}`
 				);
 			}
+
+			const duplicateModelFilenames = tableNames.filter(name => currentModelFilenames.includes(name));
+
+			if (duplicateModelFilenames.length) {
+				throw new DanaError(
+					`Cannot create model(s) for the following table(s): ${duplicateModelFilenames.join(', ')}!\nReason: There is/are already existent file(s) with .js extension for the specified table(s) and creating new model(s) will overwrite it/them!`
+				);
+			}
+
 			const baseDir = this.dana.config('baseDir');
 			const fileDetails = tableNames.map(tableName => {
 				return {
