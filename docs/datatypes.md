@@ -1,3 +1,5 @@
+## Supported Data Types
+
 Dana supports nearly all MySQL types.
 Each datatype must be defined as an object or a string. `type` property of
 object definitions should be used for specifying desired datatype.
@@ -8,7 +10,6 @@ In addition to the `type` property each datatype object may have several other p
 which represent the MySQL attributes of datatypes. As an example `nullable` property specifies
 whether column should be `NULL` or `NOT NULL`.
 
-## Data Types
 ### String Types
 <ul>
 <li>
