@@ -1,3 +1,8 @@
+/**
+	Self-validation of datatypes!
+	This script creates 1 mocha test for each datatype.
+*/
+
 const _ = require('lodash');
 const mitra = require('mitra');
 const datatypes = require('../../src/datatypes');
