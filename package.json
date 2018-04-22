@@ -7,6 +7,7 @@
   "main": "src/dana.js",
   "scripts": {
     "unit_test": "./node_modules/mocha/bin/mocha test/unit",
+    "integration_test": "./test/integration/bootstrap.sh",
     "mkdoc": "node ./src/scripts/docs.js"
   },
   "repository": {
