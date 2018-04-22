@@ -1,15 +1,20 @@
-const Diff = require('./Diff');
-const helpers = require('./helpers');
-const fs = require('fs-extra');
-const path = require('path');
-const tildify = require('tildify');
-const mysql = require('mysql2/promise');
-const sql  = require('./sql');
-const Promise = require('bluebird');
-const _ = require('lodash');
-const log = require('./log');
-const Table = require('./Table');
-const yaml = require('js-yaml');
+/**
+	Migrate class is responsible for creating, executing, rollbacking and basically
+	managing migration files.
+*/
+
+const Diff = require('./Diff')
+	, helpers = require('./helpers')
+	, fs = require('fs-extra')
+	, path = require('path')
+	, tildify = require('tildify')
+	, mysql = require('mysql2/promise')
+	, sql  = require('./sql')
+	, Promise = require('bluebird')
+	, _ = require('lodash')
+	, log = require('./log')
+	, Table = require('./Table')
+	, yaml = require('js-yaml');
 
 module.exports = class Migrate {
 
@@ -181,7 +186,7 @@ module.exports = class Migrate {
 			throw `Missing database connection configuation for the ${this.dana.env} environment!`;
 		}
 		conConfig.Promise = Promise;
-		conConfig.multipleStatements= true;
+		conConfig.multipleStatements = true;
 		return mysql.createConnection(conConfig).then(connection => {
 			this._connection = connection;
 		});
