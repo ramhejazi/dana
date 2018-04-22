@@ -70,7 +70,8 @@ const util = {
 
 	getDanaIns() {
 		const env = this.env;
-		this.ensureLocalModule();
+		// REMOVING LOCAL DEPENDENCY! Reason: Why does it have to be unnecessarily complicated?
+		// this.ensureLocalModule();
 		if (!env.configPath) {
 			this.exit('No danafile found in this directory. Specify a path with --danafile');
 		}
@@ -87,7 +88,7 @@ const util = {
 		}
 
 		if (environment) {
-			log.info('Using environment: ' + environment);
+			// log.info('Using environment: ' + environment);
 			config = config[environment];
 		}
 
@@ -97,7 +98,8 @@ const util = {
 		}
 
 		if (argv.debug !== undefined) config.debug = argv.debug;
-		var dana = require(env.modulePath);
+		// use the current globally installed dana!
+		var dana = require('../src/dana');
 		config.modulePath = env.modulePath;
 		config.baseDir = env.cwd;
 		return dana(config, environment);
