@@ -1,8 +1,12 @@
 dana
 =====
-dana is a simple MySQL migration library and a CLI app written in JavaScript (node.js). It works by **tracking changes** in models and **auto-generating** and executing migration files.
+#### Database migration CLI program
+[![npm](https://img.shields.io/npm/v/dana.svg?style=flat-square)](https://www.npmjs.com/package/dana)
+[![npm](https://img.shields.io/npm/dt/dana.svg?style=flat-square)](https://www.npmjs.com/package/dana)
 
-> dana currently is a beta software!
+dana is a database (currently, only MySQL) migration program written in JavaScript (node.js). It works by **tracking changes** in models and **auto-generating** and executing migration files.
+
+Yet another database migration library? It's somehow different. Nearly all database migration libraries/tools work with user-generated migration files. dana auto-generates the migration files. Where does it get the data? User-defined models. You change the models, it tracks the changes and then creates a new migration file!
 
 ## Table of Contents:
 - [Installation](#installation)
@@ -12,8 +16,8 @@ dana is a simple MySQL migration library and a CLI app written in JavaScript (no
 - [CLI Commands](#cli-commands)
 
 ## Installation
-```
-npm i dana --save
+```bash
+npm install -g dana
 ```
 
 ## Notable Features and Limitations
@@ -25,7 +29,7 @@ npm i dana --save
 - It automatically creates an auto-incrementing primary key (an `id` column) for each table. This means usage of `id` as column name is not allowed.
 - Model files are **validated** before generating migration files. dana doesn't create migration files when models are not valid.
 
-## CLI Commands
+## Commands
 Usage: `dana [options] [command]`
 
 Options:
@@ -39,9 +43,9 @@ Options:
 
 Commands:
 
-    datatype|dt [options] [types...]                  Get details about supported MySQL datatypes.
     init [options]                                    Create a fresh "danafile" and missing directories.
-    migrate:latest [options]                          Migrate migration files to the latest version.
+    schema:generate [options] [tables...]             Generate models for the specified table names.
     migrate:make [options]                            Track table specification changes and create migration files.
+    migrate:latest [options]                          Migrate migration files to the latest version.
     migrate:rollback [options]                        Rollback migrated migration files.
-    schema:generate|schema:gen [options] [tables...]  Generates models for the specified table names.
+    datatype|dt [options] [types...]                  Get details about supported MySQL datatypes. Example: `dana dt varchar`
