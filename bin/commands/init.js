@@ -5,7 +5,9 @@ module.exports = {
 		['-v, --verbose', 'Logs all main actions.']
 	],
 	handler(argv, util) {
-		util.ensureLocalModule();
+		// removing dana local module dependency!
+		// util.ensureLocalModule();
+
 		const {
 			path,
 			fs,
@@ -41,7 +43,7 @@ module.exports = {
 				return util.exit(`${tildify(env.configPath)} already exists`);
 			}
 			return fs.copy(
-				path.dirname(env.modulePath) + '/danafile.js',
+				path.join(__dirname, '../../src/', 'danafile.js'),
 				path.join(env.cwd, 'danafile.js')
 			).then(() => {
 				util.log.success('Created danafile.js successfully.');
