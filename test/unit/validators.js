@@ -1,3 +1,10 @@
+/**
+	Self-validation of validators!
+	This script creates 2 mocha tests for each dana validator.
+	The validators have 2 fields `i`nvalids and `v`alides parameters 
+	that are used for making tests.
+*/
+
 const helpers = require('../../src/lib/helpers');
 const validatorsDirPath = require('path').join(__dirname, '../../src/validators');
 
