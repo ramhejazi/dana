@@ -4,10 +4,10 @@ set -x
 
 LOG_FILE=/vagrant/vagrant_build.log
 
-DB_ROOT_PASSWORD=secret_passsword
+DB_ROOT_PASSWORD=secret_password
 DB_NAME=dana
 DB_USER=dana
-DB_USER_PASS=dana_password
+DB_USER_PASS=secret_password
 
 rm $LOG_FILE && touch $LOG_FILE
 
@@ -41,3 +41,5 @@ if [[ -s /vagrant/package.json ]] ;then
   echo "--- Installing node modules... ---"
   sudo -u vagrant -H sh -c "npm install" >> $LOG_FILE 2>&1
 fi
+
+npm link
