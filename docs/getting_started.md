@@ -1,5 +1,5 @@
 ## Getting Started
-dana is a command-like program written in JavaScript (node.js) and can be installed by using npm package manager. The package can be installed both locally and globally.
+dana is a command-line program written in JavaScript (node.js) and can be installed by using npm package manager. The package can be installed both locally and globally.
 
 ```bash
 # installing as an app dependency
