@@ -116,8 +116,7 @@ function invoke(env) {
 	util.env = env;
 	commander
 		.version(
-			chalk.blue('dana CLI version: ', chalk.green(pkg.version)) + '\n' +
-			chalk.blue('Local dana version: ', chalk.green(env.modulePackage.version)) + '\n'
+			pkg.version
 		)
 		.option('--danafile [path]', 'Specify the danafile path.')
 		.option('--cwd [path]', 'Specify the working directory.')
