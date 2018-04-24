@@ -1,6 +1,6 @@
 dana
 =====
-#### Database migration CLI program
+#### Database migration CLI program (nodejs)
 [![npm](https://img.shields.io/npm/v/dana.svg?style=flat-square)](https://www.npmjs.com/package/dana)
 [![npm](https://img.shields.io/npm/dt/dana.svg?style=flat-square)](https://www.npmjs.com/package/dana)
 
