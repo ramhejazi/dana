@@ -1,6 +1,6 @@
 {
   "name": "dana",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "A simple migration library and CLI app",
   "author": "Ram Hejazi",
   "license": "MIT",
@@ -18,6 +18,8 @@
     "url": "https://github.com/ramhejazi/dana/issues"
   },
   "keywords": [
+    "cli",
+    "command",
     "migration",
     "sql",
     "mysql",
