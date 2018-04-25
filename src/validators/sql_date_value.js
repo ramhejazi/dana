@@ -7,13 +7,13 @@ const eDate = moment('9999-12-31', dateFormat, true);
 module.exports = {
 	name: 'sql_date_value',
 	description: 'Value must be a valid MySQL "date" literal matching "YYYY-MM-DD" format!',
-	v: [
+	valids: [
 		'1000-01-02',
 		'1020-05-29',
 		'9999-12-31',
 		undefined,
 	],
-	i: [
+	invalids: [
 		'1000',
 		'500-01-02',
 		'100-12-31',

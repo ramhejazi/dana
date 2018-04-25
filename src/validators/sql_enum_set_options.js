@@ -6,11 +6,11 @@ const _ = require('lodash');
 module.exports = {
 	name: 'sql_enum_set_options',
 	description: 'Value must be a valid "enum" or "set" option array.',
-	v: [
+	valids: [
 		['foo', 'bar'],
 		['one', 'two', '3', '']
 	],
-	i: [
+	invalids: [
 		['one', 'two', '3', 3],
 		[undefined],
 		null,

@@ -43,7 +43,7 @@ const validRanges = {
 module.exports = {
 	title: 'sql_int_value',
 	description: 'Validates sql integer default value.',
-	v: Object.keys(validRanges).reduce((ret, key) => {
+	valids: Object.keys(validRanges).reduce((ret, key) => {
 		const [unsigned, signed] = validRanges[key];
 		ret.push({
 			value: unsigned[0],
@@ -61,7 +61,7 @@ module.exports = {
 		});
 		return ret;
 	}, []),
-	i: Object.keys(validRanges).reduce((ret, key) => {
+	invalids: Object.keys(validRanges).reduce((ret, key) => {
 		const [unsigned, signed] = validRanges[key];
 		if ( key === 'bigint' ) return ret;
 		ret.push({

@@ -11,7 +11,7 @@ const validatorsDirPath = require('path').join(__dirname, '../../src/validators'
 helpers.readDirSync(validatorsDirPath).forEach((file) => {
 	const { src, name } = file;
 	const validator = src.handler;
-	const {i: invalids, v: valids} = src;
+	const { invalids, valids} = src;
 	if ( !invalids && !valids ) return;
 	describe(`Validator ${name}`, function() {
 		if ( valids ) {

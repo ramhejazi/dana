@@ -11,8 +11,8 @@ const validRanges = {
 
 module.exports = {
 	title: 'sql_string_length',
-	description: 'Validates sql varchar and char length!',
-	v: Object.keys(validRanges).reduce((ret, key) => {
+	description: 'Validates sql "varchar" and "char" length!',
+	vailds: Object.keys(validRanges).reduce((ret, key) => {
 		const range = validRanges[key];
 		ret.push({
 			value: range[0],
@@ -28,7 +28,7 @@ module.exports = {
 		});
 		return ret;
 	}, []),
-	i: Object.keys(validRanges).reduce((ret, key) => {
+	invalids: Object.keys(validRanges).reduce((ret, key) => {
 		const range = validRanges[key];
 		ret.push({
 			value: range[0] - 1,

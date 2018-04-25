@@ -7,7 +7,7 @@ module.exports = {
 		MySQL allow several formats for "time" field but
 		dana currently only allows a string matching ${regex} regex as a default value.
 	`,
-	v: [
+	valids: [
 		'11:12:00',
 		'-00:11:12',
 		1112,
@@ -17,7 +17,7 @@ module.exports = {
 		'-838:59:59',
 		undefined
 	],
-	i: [
+	invalids: [
 		null,
 		'invalid',
 		'-8388:59:598',

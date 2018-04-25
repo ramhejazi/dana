@@ -6,13 +6,13 @@ const regex = /^\d+$/;
 module.exports = {
 	title: 'sql_year_value',
 	description: 'Value for "year" column must be a 4-digit number in the range 1901 to 2155!',
-	v: [
+	valids: [
 		1901,
 		'2155',
 		2018,
 		undefined
 	],
-	i: [
+	invalids: [
 		null,
 		'2156',
 		'1900',

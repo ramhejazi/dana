@@ -7,11 +7,11 @@ const eDate = moment('2038-01-19 03:14:07', dateFormat, true);
 module.exports = {
 	name: 'sql_timestamp_value',
 	description: 'Value must be a valid MySQL timestamp matching "YYYY-MM-DD HH:mm:ss" format!',
-	v: [
+	valids: [
 		'1970-01-01 00:00:01',
 		'2038-01-19 03:14:07',
 	],
-	i: [
+	invalids: [
 		'1970-01-01 00:00:00',
 		'2038-01-19 03:14:08'
 	],

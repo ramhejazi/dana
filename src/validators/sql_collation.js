@@ -3,7 +3,7 @@ const charsets = require('../charsets');
 module.exports = {
 	name: 'sql_collation',
 	description: 'Element must be a valid mysql collation!',
-	v: [
+	valids: [
 		{
 			value: 'utf8mb4_unicode_ci',
 			attributes: {
@@ -11,7 +11,7 @@ module.exports = {
 			}
 		}
 	],
-	i: [
+	invalids: [
 		{
 			value: 'foo',
 			attributes: {
