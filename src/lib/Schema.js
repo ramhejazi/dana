@@ -1,20 +1,34 @@
-const fs = require('fs-extra')
- 		, path = require('path')
- 		, shortid = require('shortid')
- 		, _ = require('lodash')
- 		, Promise = require('bluebird')
- 		, log = require('./log')
- 		, helpers = require('./helpers')
- 		, Table = require('./Table')
- 		, { DanaError } = require('../errors')
- 		, tildify = require('tildify');
+const fs       = require('fs-extra')
+	, Promise    = require('bluebird')
+	, Table      = require('./Table')
+	, DanaError  = require('../errors').DanaError
+	, path       = require('path')
+	, shortid    = require('shortid')
+	, _          = require('lodash')
+	, log        = require('./log')
+	, helpers    = require('./helpers')
+	, tildify    = require('tildify');
 
+/**
+ * @class for managing required directories and config file for dana
+ * @author Ram Hejazi
+ */
 module.exports = class Schema {
 
+	/**
+	* Creates a schema object
+  *
+	* @param {object} dana Instance of dana
+	*/
 	constructor(dana) {
 		this.dana = dana;
 	}
 
+	/**
+	* Creates dana required directories and danafile.js (config) file
+	* @param {boolean} verbose Logging flag, when `true` main actions are reported
+	* @returns {Promise}
+	*/
 	init(verbose) {
 		return Promise.all([
 			this._ensureDirectories(verbose),
@@ -22,9 +36,13 @@ module.exports = class Schema {
 		]);
 	}
 
+	/**
+	 * Create danafile.js by copying ../danafile.js template file
+	 * @returns {Promise}
+	 */
 	_createDanaFile() {
 		return fs.copy(
-			path.dirname(this.config('modulePath')) + '/danafile.js',
+			path.join(__dirname, '..', 'danafile.js'),
 			path.join(this.config('baseDir'), 'danafile.js')
 		).then(() => {
 			log.success('Created danafile.js successfully.');
@@ -33,23 +51,22 @@ module.exports = class Schema {
 
 	/**
 	 * Create model files by using tableNames
-	 * @param  {array} tableNames array of table names
-	 * @return {[type]}            [description]
+	 * @param   {array} tableNames array of table names
+	 * @returns {Promise}
 	 */
 	createModels(tableNames, verbose) {
 		// filter invalid table names
-		// "i" ==> "invalids"
-		const i = tableNames.reduce((ret, tableName) => {
+		const invalids = tableNames.reduce((ret, tableName) => {
 			if ( !Table.isValidName(tableName) )
 				ret.push(tableName);
 			return ret;
 		}, []);
 
-		if (i.length) {
-			const l = i.length;
+		if (invalids.length) {
+			const l = invalids.length;
 			return Promise.reject(
 				new DanaError(
-					`There ${l === 1 ? 'is': 'are'} ${l} invalid table names: \n - ${i.join('\n - ')} \nAborting!`
+					`There ${l === 1 ? 'is': 'are'} ${l} invalid table name(s): \n - ${invalids.join('\n - ')} \nTable names should match /^[a-z]([_]?[a-z]+)*$/ regular expression. Aborting!`
 				)
 			);
 		}
@@ -91,6 +108,11 @@ module.exports = class Schema {
 		});
 	}
 
+	/**
+	* Ensure `models` and `migrations` directories exist.
+	* Create directory that doesn't exist in the target project base directories
+	* @return {Promise}
+	*/
 	_ensureDirectories(verbose) {
 		return Promise.each(['models', 'migrations'], dir => {
 			const dirPath = path.join(this.config('baseDir'), dir);
@@ -126,10 +148,10 @@ module.exports = class Schema {
 	}
 
 	/**
-	 * Get current tableNames by analyzing models
-	 * it reads and returns the "tableName" and file "name"s
-	 * of the models as an array of objects
-	 * @return {array} [description]
+	 * Get current `tableName`s by analyzing models.
+	 * it reads and returns the "tableName" and file "name"s of the models
+   * as an array of objects
+	 * @returns {array}
 	 */
 	_getCurrentTableNames(verbose) {
 		return this._getModelFiles().then(files => {
@@ -155,7 +177,7 @@ module.exports = class Schema {
 	/**
 	 * Generates basic contents of a model
 	 * @param  {string} tableName
-	 * @return {string} contents of the model
+	 * @return {string} contents for the new model
 	 */
 	_defineBaseModel(tableName) {
 		const id = shortid.generate();
@@ -165,11 +187,15 @@ module.exports = class Schema {
 				columns: {}
 			},
 			_fid: id
-		}, null, 4).replace(/\"([^(\")"]+)\":/g, '$1:');
+		}, null, 4).replace(/"([^(")"]+)":/g, '$1:');
 
 		return `module.exports = ${model}`;
 	}
 
+	/**
+	* Return target project's "models" directory path.
+	* @return {string}
+	*/
 	_getModelsPath() {
 		return path.join(this.dana.config('baseDir'), 'models');
 	}
@@ -178,6 +204,5 @@ module.exports = class Schema {
 		let modelsDir = this._getModelsPath();
 		return helpers.readDir(modelsDir + '/*.js');
 	}
-
 
 };

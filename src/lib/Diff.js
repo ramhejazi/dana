@@ -1,8 +1,23 @@
-const sql = require('./sql');
-const _ = require('lodash');
-const deepDiff = require('deep-diff').diff;
+const
+	_          = require('lodash')
+	, sql      = require('./sql')
+	, deepDiff = require('deep-diff').diff;
+
+/**
+ * @class for comparing tables (old schemata vs new schemata)
+ * It generates SQL based on differences between 2 schemata
+ * @author Ram Hejazi
+ * @license MIT
+ */
 
 class Diff {
+
+	/**
+	 * Creates a new diff instance
+	 *
+	 * @param {Array} oTables old tables
+	 * @param {Array} nTables new tables
+	 */
 	constructor(oTables, nTables) {
 		this.oTables = oTables;
 		this.nTables = nTables;
@@ -60,20 +75,23 @@ class Diff {
 			collation: nCollation,
 			columns: nColumns
 		} = nTable.schema;
+
 		const {
 			charset: oCharset,
 			collation: oCollation,
 			columns: oColumns
 		} = oTable.schema;
 
-		if (oTableName !== nTableName) {
+		if ( oTableName !== nTableName ) {
 			this._renameTable('up', oTableName, nTableName);
 			this._renameTable('dn', nTableName, oTableName);
 		}
-		if (nCharset !== oCharset || nCollation !== oCollation) {
+
+		if ( (nCharset !== oCharset) || (nCollation !== oCollation) ) {
 			this._changeTableCharset('up', nTableName, nCharset, nCollation, oCharset, oCollation);
 			this._changeTableCharset('dn', oTableName, oCharset,oCollation);
 		}
+
 		const columnsDiff = deepDiff(oColumns, nColumns) || [];
 		columnsDiff.forEach(d => {
 			const colName = d.path[0];
@@ -172,7 +190,6 @@ class Diff {
 	_log(type, message) {
 		this._logs.push({ type, message });
 	}
-
 
 }
 

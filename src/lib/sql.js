@@ -1,6 +1,14 @@
 const datatypes = require('../datatypes');
 
+/**
+ * An utility object for making SQL statements
+ */
 module.exports = {
+	/**
+	 * Generates SQL for creating new table.
+	 * @param {object} table A dana model
+	 * @returns {array} Indented SQL line by line as an array
+	 */
 	createTable(table) {
 		const tableName = table.tableName;
 		const {
