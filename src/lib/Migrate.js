@@ -64,7 +64,7 @@ module.exports = class Migrate {
 			this.getLastMigrationSpecs()
 		]).spread((cSpecs, oldSchema = []) => {
 			const diff = new Diff(oldSchema, cSpecs.parsed);
-			if (!diff.hasChanged()) {
+			if ( !diff.hasChanged() ) {
 				return [
 					{
 						type: 'info',
@@ -240,10 +240,10 @@ module.exports = class Migrate {
 	}
 
 	/**
-	 * Execute SQL
+	 * Execute a SQL query
 	 * @param {string} query
 	 * @param {object} values
-	 * @returns {Promise}
+	 * @returns {Promise<any>}
 	 */
 	_query(query, values) {
 		return this._connection.query(this._formatSQL(query, values)).then(([rows]) => rows);
