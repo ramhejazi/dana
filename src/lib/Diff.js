@@ -153,7 +153,7 @@ class Diff {
 			}
 		});
 
-		this._diffTablesIndexes(oTable, nTable);
+		this._diffTableIndexes(oTable, nTable);
 	}
 
 
@@ -162,20 +162,20 @@ class Diff {
 	 * @param oTable The old table schema
 	 * @param nTable Possibly new schema of the table
 	 */
-	_diffTablesIndexes(oTable, nTable) {
-		let oIndexes = oTable.indexes || [];
-		let nIndexes = nTable.indexes || [];
+	_diffTableIndexes(oTable, nTable) {
+		let oIndexes = oTable.schema.indexes || [];
+		let nIndexes = nTable.schema.indexes || [];
 		oIndexes.forEach(oindex => {
 			let findex = nIndexes.find(ni => _.isEqual(ni, oindex));
 			if (!findex) {
 				this._dropIndex('up', nTable.tableName, oindex);
-				this._addIndex('dn', oTable.tableName, oindex);
+				this._createIndex('dn', oTable.tableName, oindex);
 			}
 		});
 		nIndexes.forEach(nindex => {
 			let findex = oIndexes.find(oindex => _.isEqual(nindex, oindex));
 			if (!findex) {
-				this._addIndex('up', nTable.tableName, nindex);
+				this._createIndex('up', nTable.tableName, nindex);
 				this._dropIndex('dn', oTable.tableName, nindex);
 			}
 		});
