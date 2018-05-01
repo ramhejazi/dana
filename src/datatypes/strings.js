@@ -57,7 +57,7 @@ function enumSet(type) {
 				sql.push(`COLLATE ${d.collate}`);
 			}
 			if ( d.comment ) {
-				sql.push(`COMMENT ${d.comment}`);
+				sql.push(`COMMENT '${d.comment}'`);
 			}
 			return sql.join(' ');
 		}
@@ -95,7 +95,7 @@ function text(type = 'text') {
 				sql.push(`COLLATE ${d.collate}`);
 			}
 			if ( d.comment ) {
-				sql.push(`COMMENT ${d.comment}`);
+				sql.push(`COMMENT '${d.comment}'`);
 			}
 			return sql.join(' ');
 		}
@@ -140,7 +140,7 @@ function varChar(type = 'varchar') {
 				sql.push(`COLLATE ${d.collate}`);
 			}
 			if ( d.comment ) {
-				sql.push(`COMMENT ${d.comment}`);
+				sql.push(`COMMENT '${d.comment}'`);
 			}
 			return sql.join(' ');
 		}

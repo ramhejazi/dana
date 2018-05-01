@@ -70,7 +70,7 @@ module.exports = {
 				sql.push(`DEFAULT ${d.default}`);
 			}
 			if (d.comment !== undefined) {
-				sql.push(`COMMENT ${d.comment}`);
+				sql.push(`COMMENT '${d.comment}'`);
 			}
 			return sql.join(' ');
 		},
@@ -171,7 +171,7 @@ function integer(params = {}) {
 				sql.push('ZEROFILL');
 			}
 			if (d.comment) {
-				sql.push(`COMMENT ${d.comment}`);
+				sql.push(`COMMENT '${d.comment}'`);
 			}
 			return sql.join(' ');
 		}
@@ -221,7 +221,7 @@ function fixedFloating(params = {}, sub_category = 'Fixed') {
 				sql.push('ZEROFILL');
 			}
 			if (d.comment) {
-				sql.push(`COMMENT ${d.comment}`);
+				sql.push(`COMMENT '${d.comment}'`);
 			}
 			return sql.join(' ');
 		}

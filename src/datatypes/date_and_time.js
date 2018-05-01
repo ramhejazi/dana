@@ -25,7 +25,7 @@ module.exports = {
 				sql.push(`DEFAULT ${d.default}`);
 			}
 			if ( d.comment ) {
-				sql.push(`COMMENT ${d.comment}`);
+				sql.push(`COMMENT '${d.comment}'`);
 			}
 			return sql.join(' ');
 		}
@@ -56,7 +56,7 @@ module.exports = {
 				sql.push(`DEFAULT ${d.default}`);
 			}
 			if ( d.comment ) {
-				sql.push(`COMMENT ${d.comment}`);
+				sql.push(`COMMENT '${d.comment}'`);
 			}
 			return sql.join(' ');
 		}
@@ -91,7 +91,7 @@ module.exports = {
 				sql.push(`ON UPDATE ${d.on_update}`);
 			}
 			if ( d.comment ) {
-				sql.push(`COMMENT ${d.comment}`);
+				sql.push(`COMMENT '${d.comment}'`);
 			}
 			return sql.join(' ');
 		}
@@ -126,7 +126,7 @@ module.exports = {
 				sql.push(`ON UPDATE ${d.on_update}`);
 			}
 			if ( d.comment ) {
-				sql.push(`COMMENT ${d.comment}`);
+				sql.push(`COMMENT '${d.comment}'`);
 			}
 			return sql.join(' ');
 		}
@@ -154,7 +154,7 @@ module.exports = {
 				sql.push(`DEFAULT ${d.default}`);
 			}
 			if ( d.comment ) {
-				sql.push(`COMMENT ${d.comment}`);
+				sql.push(`COMMENT '${d.comment}'`);
 			}
 			return sql.join(' ');
 		}
