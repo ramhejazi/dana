@@ -97,6 +97,9 @@ class Diff {
 			this._createTable('up', nTable);
 			this._dropTable('dn', nTable);
 			(nTable.schema.indexes || []).forEach(index => {
+				/**
+				 * @todo Check necessity of removing indexes after removing tables!
+				 */
 				this._createIndex('up', nTable.tableName, index);
 			});
 		});
