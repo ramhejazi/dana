@@ -1,12 +1,12 @@
 {
   "name": "dana",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "A simple migration library and CLI app",
   "author": "Ram Hejazi",
   "license": "MIT",
   "main": "src/dana.js",
   "scripts": {
-    "unit_test": "./node_modules/mocha/bin/mocha test/unit",
+    "unit_test": "nyc ./node_modules/mocha/bin/mocha test/unit/*",
     "integration_test": "./test/integration/bootstrap.sh",
     "mkdoc": "node ./src/scripts/docs.js"
   },
@@ -52,6 +52,8 @@
     "v8flags": "^2.1.1"
   },
   "devDependencies": {
-    "mocha": "^3.4.2"
+    "expect.js": "^0.3.1",
+    "mocha": "^3.4.2",
+    "nyc": "^11.7.1"
   }
 }
