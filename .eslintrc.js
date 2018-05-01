@@ -2,13 +2,13 @@ module.exports = {
     "env": {
         "commonjs": true,
         "es6": true,
-		"node": true
+        "node": true
     },
     "globals": {
         "console": true,
         "process": true,
-		"describe": true,
-		"it": true
+        "describe": true,
+        "it": true
     },
     "extends": "eslint:recommended",
     "rules": {
@@ -23,7 +23,7 @@ module.exports = {
         ],
         "quotes": [
             1,
-			"single"
+            "single"
         ],
         "semi": [
             "error",
