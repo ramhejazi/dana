@@ -43,16 +43,20 @@ module.exports = {
 		return segment[1] ? segment : `0${segment}`;
 	},
 
-	// Get a date object in the correct format, without requiring a full out library
-	// like "moment.js".
+	/**
+	 * Create a string by using the current date and time segments
+	 * @returns {string}
+	 */
 	createDateStr() {
 		const d = new Date();
-		return d.getFullYear().toString() +
-			this._padSegment(d.getMonth() + 1) +
-			this._padSegment(d.getDate()) +
-			this._padSegment(d.getHours()) +
-			this._padSegment(d.getMinutes()) +
-			this._padSegment(d.getSeconds());
+		return [
+			d.getFullYear().toString(),
+			d.getMonth() + 1,
+			d.getDate(),
+			d.getHours(),
+			d.getMinutes(),
+			d.getSeconds()
+		].map(this._padSegment).join('_');
 	},
 
 	createMigrationFileName() {
