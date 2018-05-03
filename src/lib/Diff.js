@@ -90,6 +90,10 @@ class Diff {
 			} else {
 				this._dropTable('up', oTable);
 				this._createTable('dn', oTable);
+				// Make sure table's indexes are added after rolling-back
+				(oTable.schema.indexes || []).forEach(index => {
+					this._createIndex('dn', oTable.tableName, index);
+				});
 			}
 		});
 		this._newIds.forEach(nId => {
@@ -139,18 +143,25 @@ class Diff {
 		const columnsDiff = deepDiff(oColumns, nColumns) || [];
 		columnsDiff.forEach(d => {
 			const colName = d.path[0];
+			// 'N' indicates a newly added property/element
 			if (d.kind === 'N') {
 				const nCol = nColumns[colName];
 				this._addColumn('up', nTableName, colName, nCol);
 				this._dropColumn('dn', nTableName, colName);
 			}
+			// 'E' indicates a property/element was edited
+			// 'A' indicates a change occurred within an array
 			else if (d.kind === 'E' || d.kind === 'A') {
 				const nCol = nColumns[colName];
 				const oCol = oColumns[colName];
 				this._alterColumn('up', nTableName, colName, nCol);
 				this._alterColumn('dn', oTableName, colName, oCol);
 			}
-			else if (d.kind === 'D') {
+			// 'D' indicates a property/element was deleted
+			// Changin `if (d.kind === 'D')` into `else`
+			// Point? Fixing istanbul coverage report.
+			// The `d.kind` can only be `D` anyways and relevant tests are passed!
+			else {
 				this._dropColumn('up', nTableName, colName);
 				this._addColumn('dn', oTableName, colName, oColumns[colName]);
 			}
@@ -190,7 +201,7 @@ class Diff {
 	 * @param {string} type Type of operation: "up" or "dn"
 	 * @param {object} table Table schema - contents of the model
 	 */
-	_createTable(type = 'up', table) {
+	_createTable(type, table) {
 		this[type] = this[type].concat(sql.createTable(table));
 		if ( type === 'up' ) {
 			this._log('info', `Creates table "${table.tableName}".`);
@@ -203,7 +214,7 @@ class Diff {
 	 * @param {string} type Type of operation: "up" or "dn"
 	 * @param {object} table Table schema - contents of the model
 	 */
-	_dropTable(type = 'up', table) {
+	_dropTable(type, table) {
 		this[type].push(sql.dropTable(table.tableName));
 		if ( type === 'up' ) {
 			this._log('alert', `Drops table "${table.tableName}".`);
@@ -218,7 +229,7 @@ class Diff {
 	 * @param {string} colName Name of column
 	 * @param {object|string} colDefinition
 	 */
-	_addColumn(type = 'up', tableName, colName, colDefinition) {
+	_addColumn(type, tableName, colName, colDefinition) {
 		const colSQL = sql.getColumnSQL(colDefinition);
 		this[type].push(sql.addColumn(tableName, colName, colSQL));
 	}
@@ -231,7 +242,7 @@ class Diff {
 	 * @param {string} colName Name of column
 	 * @param {object|string} colDefinition
 	 */
-	_alterColumn(type = 'up', tableName, colName, colDefinition) {
+	_alterColumn(type, tableName, colName, colDefinition) {
 		const colSQL = sql.getColumnSQL(colDefinition);
 		this[type].push(sql.alterColumn(tableName, colName, colName, colSQL));
 	}
@@ -243,7 +254,7 @@ class Diff {
 	 * @param {string} tableName
 	 * @param {string} colName Name of column
 	 */
-	_dropColumn(type = 'up', tableName, colName) {
+	_dropColumn(type, tableName, colName) {
 		this[type].push(sql.dropColumn(tableName, colName));
 	}
 
@@ -254,7 +265,7 @@ class Diff {
 	 * @param {string} oTableName Old table name
 	 * @param {string} nTableName New table name
 	 */
-	_renameTable(type = 'up', oTableName, nTableName) {
+	_renameTable(type, oTableName, nTableName) {
 		this[type].push(sql.renameTable(oTableName, nTableName));
 		if ( type === 'up' ) {
 			this._log('info', `Rename table "${oTableName}" to ${nTableName}`);
@@ -268,7 +279,7 @@ class Diff {
 	 * @param {string} tableName
 	 * @param {object} index Index definition
 	 */
-	_createIndex(type = 'up', tableName, index) {
+	_createIndex(type, tableName, index) {
 		this[type].push(sql.createIndex(tableName, index));
 		if ( type === 'up' ) {
 			this._log('info', `Creates "${index.type}" index on table "${tableName}".`);
@@ -282,7 +293,7 @@ class Diff {
 	 * @param {string} tableName
 	 * @param {object} index Index definition
 	 */
-	_dropIndex(type = 'up', tableName, index) {
+	_dropIndex(type, tableName, index) {
 		this[type].push(sql.dropIndex(tableName, index));
 		if ( type === 'up' ) {
 			this._log('alert', `Drops "${index.type}" index on table "${tableName}".`);
@@ -297,7 +308,7 @@ class Diff {
 	 * @param {string} charset
 	 * @param {string} collation
 	 */
-	_changeTableCharset(type = 'up', tableName, charset, collation) {
+	_changeTableCharset(type, tableName, charset, collation) {
 		this[type].push(sql.changeTableCharset(tableName, charset, collation));
 	}
 
