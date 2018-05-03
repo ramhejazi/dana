@@ -6,7 +6,7 @@
   "license": "MIT",
   "main": "src/dana.js",
   "scripts": {
-    "unit_test": "nyc ./node_modules/mocha/bin/mocha test/unit/*",
+    "unit_test": "nyc --reporter=text --reporter=html ./node_modules/mocha/bin/mocha test/unit/*",
     "integration_test": "./test/integration/bootstrap.sh",
     "mkdoc": "node ./src/scripts/docs.js"
   },
@@ -31,6 +31,12 @@
   "bin": {
     "dana": "./bin/cli.js"
   },
+	"nyc": {
+		"per-file": true,
+		"include": [
+			"src/**/*.js"
+		]
+	},
   "dependencies": {
     "bluebird": "^3.5.0",
     "chalk": "^1.1.3",
