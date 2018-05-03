@@ -1,5 +1,7 @@
 const Diff = require('../../../src/lib/Diff')
 	, expect = require('expect.js')
+	, _ = require('lodash')
+	, datatypes = require('../../../src/datatypes')
 	, sql = require('../../../src/lib/sql.js');
 
 describe('lib/Diff', function() {
@@ -302,16 +304,8 @@ describe('lib/Diff', function() {
 			tableName: 'a_table',
 			schema: {
 				columns: {
-					column_name: { type: 'varchar' }
-				}
-			},
-			_fid: 'aaaaaa'
-		}];
-		const nTables = [{
-			tableName: 'a_table',
-			schema: {
-				columns: {
-					column_name: { type: 'varchar' }
+					column_name: { type: 'varchar' },
+					column_name_two: { type: 'varchar' }
 				},
 				indexes: [{
 					type: 'index',
@@ -320,11 +314,28 @@ describe('lib/Diff', function() {
 			},
 			_fid: 'aaaaaa'
 		}];
+		const nTables = [{
+			tableName: 'a_table',
+			schema: {
+				columns: {
+					column_name: { type: 'varchar' },
+					column_name_two: { type: 'varchar' }
+				},
+				indexes: [{
+					type: 'index',
+					columns: ['column_name']
+				}, {
+					type: 'index',
+					columns: ['column_name_two']
+				}]
+			},
+			_fid: 'aaaaaa'
+		}];
 		const diff = new Diff(oTables, nTables);
 		const diff2 = new Diff([], []);
 		const diff3 = new Diff([], []);
-		const expectedUp = [sql.createIndex('a_table', nTables[0].schema.indexes[0])];
-		const expectedDown = [sql.dropIndex('a_table', nTables[0].schema.indexes[0])];
+		const expectedUp = [sql.createIndex('a_table', nTables[0].schema.indexes[1])];
+		const expectedDown = [sql.dropIndex('a_table', nTables[0].schema.indexes[1])];
 		diff2._diffTableIndexes(oTables[0], nTables[0]);
 		diff3._diffTables(oTables[0], nTables[0]);
 		expect(diff.up).to.eql(expectedUp);
@@ -371,6 +382,128 @@ describe('lib/Diff', function() {
 		expect(diff2.dn).to.eql(expectedDown);
 		expect(diff3.up).to.eql(expectedUp);
 		expect(diff3.dn).to.eql(expectedDown);
+	});
+
+	it('should detect and handle more complicated differences', function() {
+		/**
+		 * Create an object for all accepted datatypes
+		 * key: name of the column which is simply datatype name
+		 * value: clone of datatype `defaults` properties
+		 */
+		const allAcceptedColumns = _.reduce(_.keys(datatypes), function(columns, datatypeName) {
+			const colDef = Object.assign({}, datatypes[datatypeName].defaults);
+			columns[datatypeName] = colDef;
+			return columns;
+		}, {});
+
+		const oTables = [{
+			tableName: 'a_table',
+			schema: {
+				columns: {
+					column_name: Object.assign({}, datatypes.varchar.defaults)
+				},
+				indexes: [{
+					type: 'index',
+					columns: ['column_name']
+				}]
+			},
+			_fid: 'aaa'
+		}, {
+			tableName: 'b_table',
+			schema: {
+				columns: allAcceptedColumns,
+				charset: 'utf8mb4',
+				collation: 'utf8mb4_unicode_ci',
+				indexes: [{
+					type: 'index',
+					columns: ['varchar'],
+				}, {
+					type: 'fulltext',
+					columns: ['text']
+				}],
+			},
+			_fid: 'bbb'
+		}, {
+			tableName: 'd_table',
+			schema: {
+				columns: { type: 'text' }
+			},
+			_fid: 'ddd'
+		}];
+
+		const nTables = [{
+			tableName: 'b_table',
+			schema: {
+				// Omit several columns
+				columns: _.omit(allAcceptedColumns, 'varchar', 'int', 'datetime'),
+				// make sure both properies have been set as Diff class expect
+				// normalized models!
+				charset: 'utf8mb4',
+				// change collation
+				collation: 'utf8_spanish2_ci'
+				// indexes have been dropped!
+			},
+			_fid: 'bbb'
+		}, {
+			tableName: 'c_table',
+			schema: {
+				columns: allAcceptedColumns
+			},
+			_fid: 'ccc'
+		}, {
+			tableName: 'd_table',
+			schema: {
+				columns: { type: 'text' }
+			},
+			_fid: 'ddd'
+		}];
+
+		/**
+		 * a_table:
+		 * - Table should be dropped
+		 * - SQL for recreating indexes must exist in `down`
+		 *
+		 * b_table:
+		 * - Columns 'varchar', 'int' and 'datetime' should be dropped
+		 * - Table's 'collation' should be changed
+		 * - All indexes should be dropped
+		 *
+		 * c_table:
+		 * - Table should be created
+		 *
+		 * d_table
+		 * NO CHANGES
+		 */
+		var expectedUp = [];
+		var expectedDn = [];
+		// a_table
+		expectedUp.push( sql.dropTable('a_table') );
+		expectedDn = sql.createTable(oTables[0]);
+		expectedDn.push( sql.createIndex('a_table', oTables[0].schema.indexes[0] ) );
+
+		// b_table
+		// change collation
+		expectedUp.push( sql.changeTableCharset('b_table', 'utf8mb4', 'utf8_spanish2_ci') );
+		expectedDn.push( sql.changeTableCharset('b_table', 'utf8mb4', 'utf8mb4_unicode_ci') );
+		// drop columns
+		['varchar', 'int', 'datetime'].forEach(function(colName) {
+			const colSQL = sql.getColumnSQL(datatypes[colName].defaults);
+			expectedUp.push( sql.dropColumn('b_table', colName) );
+			expectedDn.push( sql.addColumn('b_table', colName, colSQL) );
+		});
+		oTables[1].schema.indexes.forEach(function(index) {
+			expectedUp.push( sql.dropIndex('b_table', index) );
+			expectedDn.push( sql.createIndex('b_table', index) );
+		});
+		// c_table
+		expectedUp = expectedUp.concat( sql.createTable(nTables[1]) );
+		expectedDn.push( sql.dropTable(nTables[1].tableName) );
+
+		const diff = new Diff(oTables, nTables);
+		// console.log('expectedUp', expectedUp);
+		// console.log('actualUp', diff.up);
+		expect(diff.up).to.eql(expectedUp);
+		expect(diff.dn).to.eql(expectedDn);
 	});
 
 
