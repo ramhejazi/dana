@@ -16,7 +16,7 @@ module.exports = {
 			collation = 'utf8mb4_unicode_ci',
 			columns
 		} = table.schema;
-		let cols = ['  id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,'];
+		let cols = ['  `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,'];
 		Object.keys(columns).forEach(name => {
 			let colDef = this.getColumnSQL(columns[name]);
 			cols.push(`  \`${name}\` ${colDef},`);
