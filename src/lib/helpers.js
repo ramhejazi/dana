@@ -1,6 +1,5 @@
 const glob = require('glob-promise');
 const path = require('path');
-const crypto = require('crypto');
 const fs = require('fs-extra');
 const yaml = require('js-yaml');
 
@@ -54,14 +53,6 @@ module.exports = {
 			this._padSegment(d.getHours()) +
 			this._padSegment(d.getMinutes()) +
 			this._padSegment(d.getSeconds());
-	},
-
-	makeDiffHash(diff) {
-		const hash = crypto.createHash('sha1');
-		const content = diff.up + diff.down + diff.schema;
-		hash.setEncoding('hex').write(content);
-		hash.end();
-		return hash.read();
 	},
 
 	createMigrationFileName() {
