@@ -48,3 +48,6 @@ jspm_packages
 
 # test generated data
 test/integration/test_tmp_dir
+
+# add macOS .DS_Store file
+.DS_STORE
