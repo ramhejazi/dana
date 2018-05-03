@@ -1,6 +1,6 @@
 {
   "name": "dana",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "description": "A simple migration library and CLI app",
   "author": "Ram Hejazi",
   "license": "MIT",
