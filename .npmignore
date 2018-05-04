@@ -4,3 +4,10 @@ node_modules
 .git
 *.log
 todo.md
+coverage
+.nyc_output
+.editorconfig
+.eslintrc.js
+Vagrantfile
+todo.md
+vagrant_provisioner.sh
