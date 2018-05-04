@@ -79,21 +79,29 @@ module.exports = {
 			}
 		});
 		return ret;
-	}, []),
+	}, [
+		{ value: 'string', attributes: { type: 'int' } },
+		{ value: 2, attributes: { type: 'unsupported' } }
+	]),
+
 	handler(value, options, key, message, attributes) {
 		if (typeof value === 'undefined') {
 			return;
 		}
 		if (typeof value !== 'number') {
-			return `Invalid value for the "${attributes.type}" column!`;
+			return `Invalid value specified for "${attributes.type}" column!`;
 		}
-		const type = attributes.type;
-		const ranges = validRanges[type];
+		const
+			type = attributes.type
+			, ranges = validRanges[type];
 
-		if (!ranges) return `Unknown type: ${type}`;
+		if ( !ranges ) {
+			return `Unknown type: ${type}`;
+		}
+
 		const [min, max] = ranges[attributes.unsigned ? 0 : 1];
 		if (value < min || value > max) {
 			return `The default value for the ${attributes.unsigned ? 'unsigned' : 'signed'} ${attributes.type} must be between ${min} and ${max}`;
-		} 
+		}
 	}
 };

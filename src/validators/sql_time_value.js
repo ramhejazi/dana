@@ -25,7 +25,7 @@ module.exports = {
 	handler(value) {
 		if ( value === undefined ) return;
 		if ( !regex.test(String(value)) ) {
-			return `Invalid value for the "time" field: ${value}! Value should match ${regex} regex!`;
-		} 
+			return 'Invalid value for the "time" field. Value should match ${regex} regex!';
+		}
 	}
 };

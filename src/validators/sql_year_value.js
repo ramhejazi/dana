@@ -1,5 +1,6 @@
-const {getType} = require('../lib/helpers');
-const regex = /^\d+$/;
+const
+	{getType} = require('../lib/helpers')
+	, regex = /^\d+$/;
 /**
  * validator: sql_default_year_value
  */
