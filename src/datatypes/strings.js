@@ -114,7 +114,7 @@ function varChar(type = 'varchar') {
 	};
 	const rules = {
 		type: 'in:' + type,
-		default: 'type:undefined,string|sql_string_value',
+		default: 'type:undefined,string|sql_string_default_value',
 		length: 'number|integer|sql_string_length',
 		collation: 'sql_collation',
 		nullable: 'boolean',
