@@ -31,12 +31,12 @@
   "bin": {
     "dana": "./bin/cli.js"
   },
-	"nyc": {
-		"per-file": true,
-		"include": [
-			"src/**/*.js"
-		]
-	},
+  "nyc": {
+    "per-file": true,
+    "include": [
+      "src/**/*.js"
+    ]
+  },
   "dependencies": {
     "bluebird": "^3.5.0",
     "chalk": "^1.1.3",
@@ -60,6 +60,7 @@
   "devDependencies": {
     "expect.js": "^0.3.1",
     "mocha": "^3.4.2",
+    "mock-fs": "^4.4.2",
     "nyc": "^11.7.1"
   }
 }
