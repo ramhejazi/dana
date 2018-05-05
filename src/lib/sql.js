@@ -42,7 +42,7 @@ module.exports = {
 	},
 
 	dropTable(tbl) {
-		return `DROP TABLE ${tbl};`;
+		return `DROP TABLE \`${tbl};\``;
 	},
 
 	addColumn(tbl, col, spec) {
@@ -63,8 +63,8 @@ module.exports = {
 
 	createIndex(tbl, index) {
 		const name = tbl + '_' + index.columns.join('_');
-		const type = index.type === 'index' ? '' : index.type;
-		return `ALTER TABLE \`${tbl}\` ADD ${type.toUpperCase()} INDEX \`${name}\` (${index.columns.join(',')});`;
+		const type = index.type === 'index' ? '' : ` ${index.type}`;
+		return `ALTER TABLE \`${tbl}\` ADD${type.toUpperCase()} INDEX \`${name}\` (${index.columns.join(',')});`;
 	},
 
 	dropIndex(tbl, index) {
