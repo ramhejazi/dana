@@ -1,14 +1,17 @@
-dana
+dana - database migration program
 =====
-#### Database migration CLI program (nodejs)
-[![npm](https://img.shields.io/npm/v/dana.svg?style=flat-square)](https://www.npmjs.com/package/dana)
-[![npm](https://img.shields.io/npm/dt/dana.svg?style=flat-square)](https://www.npmjs.com/package/dana)
+####
+[![npm version](https://img.shields.io/npm/v/dana.svg?style=flat-square)](https://www.npmjs.com/package/dana)
+[![npm downloads](https://img.shields.io/npm/dt/dana.svg?style=flat-square)](https://www.npmjs.com/package/dana)
+[![coverage status](https://coveralls.io/repos/github/ramhejazi/dana/badge.svg?branch=master)](https://coveralls.io/github/ramhejazi/dana?branch=master)
+![npm license](https://img.shields.io/npm/l/express.svg)
 
-dana is a database (currently, only MySQL) migration program written in JavaScript (node.js). It works by **tracking changes** in models and **auto-generating** and executing migration files.
+
+ > dana is a database (currently, only MySQL) migration program written in JavaScript (node.js). It works by _tracking changes_ in models and _auto-generating_ and _executing_ migration files.
 
 Yet another database migration library? It's somehow different. Nearly all database migration libraries/tools work with user-generated migration files. dana auto-generates the migration files. Where does it get the data? User-defined models. You change the models, it tracks the changes and then creates a new migration file!
 
-## Table of Contents:
+## Table of contents:
 - [Installation](#installation)
 - [Notable Features](#notable-features-and-limitations)
 - [Getting Started](https://github.com/ramhejazi/dana/blob/master/docs/getting_started.md)
@@ -18,7 +21,7 @@ Yet another database migration library? It's somehow different. Nearly all datab
 
 ## Installation
 ```bash
-npm install -g dana
+npm i -g dana
 ```
 
 ## Notable Features and Limitations
