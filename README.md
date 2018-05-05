@@ -3,7 +3,6 @@ dana - database migration program
 ####
 [![npm version](https://img.shields.io/npm/v/dana.svg?style=flat-square)](https://www.npmjs.com/package/dana)
 [![npm downloads](https://img.shields.io/npm/dt/dana.svg?style=flat-square)](https://www.npmjs.com/package/dana)
-[![coverage status](https://coveralls.io/repos/github/ramhejazi/dana/badge.svg?branch=master)](https://coveralls.io/github/ramhejazi/dana?branch=master)
 ![npm license](https://img.shields.io/npm/l/express.svg)
 
 
