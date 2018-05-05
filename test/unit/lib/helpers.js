@@ -1,4 +1,7 @@
+/*global after, before*/
+
 const helpers = require('../../../src/lib/helpers')
+	, mockFs = require('mock-fs')
 	, expect = require('expect.js');
 
 describe('lib/helpers', function() {
@@ -44,7 +47,7 @@ describe('lib/helpers', function() {
 		it('should convert each passed array element into an object', function() {
 			const input = [
 				'/home/user/filename.js',
-				'/home/user/dir/another_file.yaml'
+				'/home/user/dir/another_file.yml'
 			];
 			const output = [{
 				name: 'filename',
@@ -53,8 +56,8 @@ describe('lib/helpers', function() {
 				src: undefined
 			}, {
 				name: 'another_file',
-				ext: 'yaml',
-				path: '/home/user/dir/another_file.yaml',
+				ext: 'yml',
+				path: '/home/user/dir/another_file.yml',
 				src: undefined
 			}];
 			const returned = helpers.normalizeFiles(input, false);
@@ -62,4 +65,57 @@ describe('lib/helpers', function() {
 		});
 	});
 
+	describe('.requireDirFiles()', function() {
+		before(function() {
+			mockFs({
+				'/test_directory': {
+					'js_file.js': 'module.exports="js file content"',
+					'js_file2.js': 'module.exports="second js file content"'
+				}
+			});
+		});
+
+		after(function() {
+			mockFs.restore();
+		});
+
+		it('should read dir files correctly', function() {
+			return helpers.requireDirFiles('/test_directory/*', false).then(function(normalizedFiles) {
+				expect(normalizedFiles).to.eql([
+					{
+						name: 'js_file',
+						ext: 'js',
+						path: '/test_directory/js_file.js',
+						src: undefined
+					},
+					{
+						name: 'js_file2',
+						ext: 'js',
+						path: '/test_directory/js_file2.js',
+						src: undefined
+					}
+				]);
+			});
+		});
+	});
+
+	describe('.readYamlFile()', function() {
+		before(function() {
+			mockFs({
+				'/test_directory': {
+					'yaml_file.yml': 'up: Up property value!'
+				}
+			});
+		});
+
+		after(function() {
+			mockFs.restore();
+		});
+
+		it('should read and load the file correctly', function() {
+			return helpers.readYamlFile('/test_directory/yaml_file.yml').then(function(content) {
+				expect(content).to.eql({ up: 'Up property value!'});
+			});
+		});
+	});
 });

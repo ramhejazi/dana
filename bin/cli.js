@@ -74,7 +74,7 @@ const util = {
 	 *
 	 * @param {array} messages
 	 * @param {string} messages[].type type of the message
-	 * @param {string} messages[].message message content 
+	 * @param {string} messages[].message message content
 	 */
 	logMessages(messages = []) {
 		if ( Array.isArray(messages) ) {
@@ -148,7 +148,7 @@ function invoke(env) {
 		.option('--cwd [path]', 'Specify the working directory.')
 		.option('--env [name]', 'environment, default: process.env.NODE_ENV || development');
 
-	helpers.readDir(path.join(__dirname, './commands') + '/*.js').then(commandFiles => {
+	helpers.requireDirFiles(path.join(__dirname, './commands') + '/*.js').then(commandFiles => {
 		const cmdNames = _.map(commandFiles, 'name').concat(_.map(commandFiles, 'src.alias'));
 		// Define commands programmatically!
 		commandFiles.forEach(file => {

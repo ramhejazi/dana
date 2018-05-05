@@ -306,7 +306,7 @@ module.exports = class Migrate {
 	 */
 	getMigrationFiles() {
 		let migrationsDir = path.join(this.dana.config('baseDir'), 'migrations');
-		return helpers.readDir(migrationsDir + '/*.yml', false).then(files => {
+		return helpers.requireDirFiles(migrationsDir + '/*.yml', false).then(files => {
 			return files.sort((a, b) => +a.name > +b.name);
 		});
 	}

@@ -202,7 +202,7 @@ module.exports = class Schema {
 
 	_getModelFiles() {
 		let modelsDir = this._getModelsPath();
-		return helpers.readDir(modelsDir + '/*.js');
+		return helpers.requireDirFiles(modelsDir + '/*.js');
 	}
 
 };

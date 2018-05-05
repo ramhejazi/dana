@@ -10,7 +10,7 @@ const validatorsDirPath = require('path').join(__dirname, '../../../src/validato
 const expect = require('expect.js');
 
 describe('Validators', function() {
-	helpers.readDirSync(validatorsDirPath).forEach((file) => {
+	helpers.requireDirFilesSync(validatorsDirPath + '/*.js').forEach((file) => {
 		const { src, name } = file;
 		const validator = src.handler;
 		const { invalids, valids } = src;
