@@ -1,10 +1,10 @@
 module.exports = {
-	'varchar': varChar('varchar'),
+	'varchar': varChar(),
 	'char': varChar('char'),
 	'varbinary': varChar('varbinary'),
 	'binary': varChar('binary'),
 
-	'text': text('text'),
+	'text': text(),
 	'tinytext': text('tinytext'),
 	'mediumtext': text('mediumtext'),
 	'longtext': text('longtext'),
@@ -32,6 +32,7 @@ function enumSet(type) {
 	const rules = {
 		type: 'in:' + type,
 		options: 'array|sql_enum_set_options',
+		default: 'type:undefined,string|sql_string_default_value',
 		collation: 'sql_collation',
 		nullable: 'type:boolean',
 		charset: 'sql_charset',
@@ -48,7 +49,7 @@ function enumSet(type) {
 				sql.push('NOT NULL');
 			}
 			if ( d.default ) {
-				sql.push(`DEFAULT ${d.option}`);
+				sql.push(`DEFAULT '${d.default}'`);
 			}
 			if ( d.charset ) {
 				sql.push(`CHARACTER SET ${d.charset}`);
@@ -128,7 +129,7 @@ function varChar(type = 'varchar') {
 		generateSQL(d) {
 			let sql = [`${d.type.toUpperCase()}(${d.length})`];
 			if ( d.default ) {
-				sql.push(`DEFAULT ${d.default}`);
+				sql.push(`DEFAULT '${d.default}'`);
 			}
 			if ( d.nullable === false ) {
 				sql.push('NOT NULL');
