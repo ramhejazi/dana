@@ -46,7 +46,7 @@ const util = {
 	 */
 	exit(e) {
 		if ( e instanceof DanaError ) {
-			log.fail(`${e.name}: ${e.message || e}`);
+			log.fail(`${e.message || e}`);
 			if ( e.file ) {
 				log.fail(`\nfile: ${e.file.path}`);
 			}
@@ -64,8 +64,8 @@ const util = {
 	 */
 	ensureLocalModule() {
 		if ( !this.env.modulePath ) {
-			this.log.fail('No local dana install found in: ' + chalk.magenta(tildify(this.env.cwd)));
-			this.exit('Try installing dana by using the following command: "npm install dana".');
+			this.log.fail('no local dana installation found in: ' + chalk.magenta(tildify(this.env.cwd)));
+			this.exit('try installing dana by using the following command: "npm install dana".');
 		}
 	},
 
@@ -99,12 +99,12 @@ const util = {
 		// this.ensureLocalModule();
 
 		if ( !env.configPath ) {
-			this.exit('No danafile found in this directory. Specify a path with --danafile');
+			log.fail('no dana configuration file (danafile.js) found in this directory. run `dana init` for generating one or specify a path with --danafile', true);
 		}
 
 		if ( process.cwd() !== env.cwd ) {
 			process.chdir(env.cwd);
-			log.info('Working directory changed to ' + chalk.magenta(tildify(env.cwd)));
+			log.info('working directory changed to ' + chalk.magenta(tildify(env.cwd)));
 		}
 
 		const
@@ -114,8 +114,7 @@ const util = {
 		const config = danaFile[environment];
 
 		if (!config) {
-			log.fail('Unable to read danafile config!');
-			process.exit(1);
+			log.fail('unable to read danafile config!', true);
 		}
 
 		if (argv.debug !== undefined) config.debug = argv.debug;
@@ -155,12 +154,12 @@ function invoke(env) {
 			let spec = file.src;
 			let command = commander.command(spec.cmd);
 			command.description(spec.description);
-			if (spec.options) {
+			if ( spec.options ) {
 				spec.options.forEach(option => {
 					command.option(...option);
 				});
 			}
-			if (spec.alias) {
+			if ( spec.alias ) {
 				command.alias(spec.alias);
 			}
 			command.action(actionWrapper(spec.handler));
@@ -168,8 +167,8 @@ function invoke(env) {
 		commander.parse(process.argv);
 		const cmdName = process.argv[2];
 
-		if (process.argv.length < 3 || !cmdNames.includes(cmdName)) {
-			if (cmdName) log.fail(`Unknown command "${cmdName}"!`);
+		if ( process.argv.length < 3 || !cmdNames.includes(cmdName) ) {
+			if (cmdName) log.fail(`unknown command "${cmdName}"!`);
 			commander.help();
 		}
 	});
@@ -184,11 +183,11 @@ var liftoff = new Liftoff({
 });
 
 liftoff.on('require', function(name) {
-	console.log('Requiring external module', chalk.magenta(name));
+	console.log('requiring external module', chalk.magenta(name));
 });
 
 liftoff.on('requireFail', function(name) {
-	console.log(chalk.red('Failed to load external module'), chalk.magenta(name));
+	console.log(chalk.red('failed to load external module'), chalk.magenta(name));
 });
 
 liftoff.launch({

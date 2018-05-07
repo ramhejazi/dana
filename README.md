@@ -1,6 +1,5 @@
 dana - database migration program
 =====
-####
 [![npm version](https://img.shields.io/npm/v/dana.svg?style=flat-square)](https://www.npmjs.com/package/dana)
 [![npm downloads](https://img.shields.io/npm/dt/dana.svg?style=flat-square)](https://www.npmjs.com/package/dana)
 [![coverage status](https://coveralls.io/repos/github/ramhejazi/dana/badge.svg?branch=master)](https://coveralls.io/github/ramhejazi/dana?branch=master)
@@ -102,9 +101,8 @@ up: |-
     id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (`id`)
   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-down: DROP TABLE posts;
-specs: >-
-  [{"tableName":"posts","schema":{"columns":{},"charset":"utf8mb4","collation":"utf8mb4_unicode_ci"},"_fid":"BkoUoLonf"}]
+down: DROP TABLE `posts`;
+specs: ...
 ```
 Executing migration files by using `dana migrate:latest` command:
 

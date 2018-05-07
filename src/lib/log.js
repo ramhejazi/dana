@@ -1,24 +1,38 @@
-const chalk = require('chalk');
+const
+	chalk 		= require('chalk'),
+	timestamp = require('time-stamp');
 
 module.exports = {
-	warn(msg) {
-		this.echo(chalk.yellow('WARN: ' + msg.trim()));
+
+	_fancify(color, message) {
+		const prefix = timestamp('[YYYY/MM/DD HH:mm:ss]');
+		return chalk[color](`${prefix} ${message}`);
 	},
-	echo(msg) {
-		console.log(`${msg}`);
+
+	listify(list) {
+		return `\n - ${list.join('\n - ')}`;
 	},
-	alert(msg = '') {
-		this.echo(chalk.red('ALERT: ' + msg.trim()));
+
+	warn(message, exit = false) {
+		this.echo('yellow', message, exit);
 	},
-	fail(msg) {
-		msg = msg instanceof Error ? msg.stack : msg;
-		this.echo(chalk.red(msg));
+
+	fail(message, exit = false) {
+		message = message instanceof Error ? message.stack : message;
+		this.echo('red', message, exit);
 	},
-	success(msg, exit = false) {
-		this.echo(chalk.green(msg));
+
+	success(message, exit = false) {
+		this.echo('green', message, exit);
+	},
+
+	info(message, exit = false) {
+		this.echo('blue', message, exit);
+	},
+
+	echo(color = 'blue', message, exit) {
+		console.log(this._fancify(color, message));
 		if (exit) process.exit(1);
-	},
-	info(msg) {
-		this.echo(chalk.blue(msg));
 	}
+
 };

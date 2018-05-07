@@ -63,34 +63,33 @@ module.exports = class Schema {
 		}, []);
 
 		if (invalids.length) {
-			const l = invalids.length;
 			return Promise.reject(
 				new DanaError(
-					`There ${l === 1 ? 'is': 'are'} ${l} invalid table name(s): \n - ${invalids.join('\n - ')} \nTable names should match /^[a-z]([_]?[a-z]+)*$/ regular expression. Aborting!`
+					`can't create models for following table names: ${log.listify(invalids)} \ntable names should match ${Table.getNameRegex()} regular expression. aborting!`
 				)
 			);
 		}
 
 		if ( verbose ) {
-			log.info(`${tableNames.length} model(s) will be created: \n - ${tableNames.join('\n - ')}`);
+			log.info(`${tableNames.length} model(s) will be created: ${log.listify(tableNames)}`);
 		}
 
 		return this._getCurrentTableNames(verbose).then(currentTables => {
 			const currentTableNames = _.map(currentTables, 'tableName');
-			const currentModelFilenames = _.map(currentTables, 'filename');
+			const currentModelFileNames = _.map(currentTables, 'filename');
 
 			const duplicateTableNames = tableNames.filter(name => currentTableNames.includes(name));
 			if (duplicateTableNames.length) {
 				throw new DanaError(
-					`There are existent model files for following table names: ${duplicateTableNames.join(', ')}`
+					`there are existent model files for following table names: ${log.listify(duplicateTableNames)}`
 				);
 			}
 
-			const duplicateModelFilenames = tableNames.filter(name => currentModelFilenames.includes(name));
+			const duplicateModelFileNames = tableNames.filter(name => currentModelFileNames.includes(name));
 
-			if (duplicateModelFilenames.length) {
+			if (duplicateModelFileNames.length) {
 				throw new DanaError(
-					`Cannot create model(s) for the following table(s): ${duplicateModelFilenames.join(', ')}!\nReason: There is/are already existent file(s) with .js extension for the specified table(s) and creating new model(s) will overwrite it/them!`
+					`cannot create model(s) for the following table(s): ${log.listify(duplicateModelFileNames)} \nReason: There is/are already existent file(s) with .js extension for the specified table(s) and creating new model(s) will overwrite it/them!`
 				);
 			}
 
@@ -159,11 +158,11 @@ module.exports = class Schema {
 				let fileSrcType = helpers.getType(file.src);
 				let tableName;
 				if ( verbose && fileSrcType !== 'object' ) {
-					log.warn(`Model "${file.name}" exports a(n) "${fileSrcType}" instead of an object.`);
+					log.warn(`model "${file.name}" exports a(n) "${fileSrcType}" instead of an object.`);
 				} else {
 					tableName = file.src.tableName;
 					if ( verbose && tableName !== file.name ) {
-						log.warn(`Model "${file.name}"'s filename is not equal to it's tableName "${tableName}"`);
+						log.warn(`model "${file.name}"'s filename is not equal to it's tableName "${tableName}"`);
 					}
 				}
 				return {
@@ -193,7 +192,7 @@ module.exports = class Schema {
 	}
 
 	/**
-	* Return target project's "models" directory path.
+	* Get absolute path of target project's "models" directory.
 	* @return {string}
 	*/
 	_getModelsPath() {

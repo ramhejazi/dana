@@ -346,7 +346,7 @@ module.exports = class Migrate {
 		let diff = _.difference(rowNames, fileNames);
 		if (diff.length) {
 			throw new Error(
-				`Currupt migration directory detected. The are ${diff.length} missing migration file(s): \n${diff.join('\n')}`
+				`currupt migration directory detected. The are ${diff.length} missing migration file(s): ${log.listify(diff)}`
 			);
 		}
 		let unordered = rowNames.filter((el, index) => {
@@ -354,7 +354,7 @@ module.exports = class Migrate {
 		});
 		if ( unordered.length ) {
 			throw new Error(
-				`Corrupt migration directory detected. There are ${unordered.length} out of order migration files: \n${unordered.join('\n')}`
+				`corrupt migration directory detected. There are ${unordered.length} out of order migration files: ${log.listify(unordered)}`
 			);
 		}
 	}

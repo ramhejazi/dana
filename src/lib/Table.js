@@ -6,7 +6,6 @@ const {
 	SchemaError
 } = require('../errors');
 const datatypes = require('../datatypes');
-const nameRegex = /^[a-z]([_]?[a-z]+)*$/;
 
 // Basic validation rules
 let basicRules = mitra.normalizeRules({
@@ -137,13 +136,17 @@ class Table {
 	_validateTableName() {
 		if ( !this.constructor.isValidName(this.tableName) ) {
 			throw new SchemaError(
-				`The tableName property must be a string matching "${nameRegex}" regular expression!`
+				`the tableName property must be a string matching "${this.constructor.getNameRegex()}" regular expression!`
 			);
 		}
 	}
 
+	static getNameRegex() {
+		return /^[a-z]([_]?[a-z]+)*$/;
+	}
+
 	static isValidName(name) {
-		return nameRegex.test(name);
+		return this.getNameRegex().test(name);
 	}
 
 }

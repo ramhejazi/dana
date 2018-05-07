@@ -5,9 +5,6 @@ module.exports = {
 		['-v, --verbose', 'Logs all main actions.']
 	],
 	handler(argv, util) {
-		// removing dana local module dependency!
-		// util.ensureLocalModule();
-
 		const {
 			path,
 			fs,
@@ -20,33 +17,32 @@ module.exports = {
 		const verbose = !!this.verbose;
 
 		if (verbose) {
-			log.info('Ensuring required directories "models" and "migrations" exists...');
+			log.info('ensuring required directories "models" and "migrations" exists...');
 		}
 
 		Promise.each(['models', 'migrations'], dir => {
 			const dirPath = path.join(util.env.cwd, dir);
 			return fs.pathExists(dirPath).then(exists => {
 				if ( exists ) {
-					if (verbose)
-						log.warn(`Directory "${tildify(dirPath)}" already exists!`);
+					log.warn(`directory "${tildify(dirPath)}" already exists!`);
 					return;
 				} else {
 					if (verbose)
-						log.info(`Creating missing directory "${tildify(dirPath)}" ...`);
+						log.info(`creating missing directory "${tildify(dirPath)}" ...`);
 					return fs.ensureDir(dirPath).then(() => {
-						log.success(`Directory "${tildify(dirPath)}" created!`);
+						log.success(`directory "${tildify(dirPath)}" created!`);
 					});
 				}
 			});
 		}).then(() => {
 			if (env.configPath) {
-				return util.exit(`${tildify(env.configPath)} already exists`);
+				return util.log.warn(`${tildify(env.configPath)} already exists!`, true);
 			}
 			return fs.copy(
 				path.join(__dirname, '../../src/', 'danafile.js'),
 				path.join(env.cwd, 'danafile.js')
 			).then(() => {
-				util.log.success('Created danafile.js successfully.');
+				util.log.success('created danafile.js successfully.');
 			});
 		}).catch(util.exit.bind(util));
 	}

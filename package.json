@@ -6,8 +6,8 @@
   "license": "MIT",
   "main": "src/dana.js",
   "scripts": {
-    "unit_test": "nyc --reporter=text --reporter=html ./node_modules/mocha/bin/mocha test/unit/*",
-    "integration_test": "./test/integration/bootstrap.sh",
+    "test:unit": "nyc --reporter=text --reporter=html ./node_modules/mocha/bin/mocha test/unit/*",
+    "test:integration": "./test/integration/bootstrap.sh",
     "mkdoc": "node ./src/scripts/docs.js"
   },
   "repository": {
@@ -34,7 +34,7 @@
   "nyc": {
     "per-file": true,
     "include": [
-      "src/**/*.js"
+      "./src/**/*.js"
     ]
   },
   "dependencies": {
@@ -55,6 +55,7 @@
     "shortid": "^2.2.8",
     "simple-array-diff": "^1.1.0",
     "tildify": "^1.2.0",
+    "time-stamp": "^2.0.0",
     "v8flags": "^2.1.1"
   },
   "devDependencies": {
