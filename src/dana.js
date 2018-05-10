@@ -46,10 +46,7 @@ const dana = {
 module.exports = function(configs = {}, environment = 'development') {
 	const instance = Object.create(dana);
 	instance.env = environment;
-	instance.__configs = Object.assign({
-		defaultCharset: 'utf8mb4',
-		defaultCollation: 'utf8mb4_unicode_ci'
-	}, configs);
+	instance.__configs = configs;
 	return instance;
 };
 
