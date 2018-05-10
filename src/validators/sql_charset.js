@@ -16,7 +16,7 @@ module.exports = {
 	handler(charset) {
 		if (charset === undefined) return;
 		if ( !charsets.hasOwnProperty(charset) ) {
-			return `Unknown charset: "${charset}"`;
+			return 'the specified charset is not supported!';
 		}
 	}
 };

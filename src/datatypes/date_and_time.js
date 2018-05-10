@@ -11,7 +11,6 @@ module.exports = {
 			comment: undefined
 		},
 		rules: {
-			type: 'in:date',
 			default: 'sql_date_value',
 			nullable: 'boolean',
 			comment: 'sql_comment'
@@ -22,7 +21,7 @@ module.exports = {
 				sql.push('NOT NULL');
 			}
 			if ( d.default ) {
-				sql.push(`DEFAULT ${d.default}`);
+				sql.push(`DEFAULT '${d.default}'`);
 			}
 			if ( d.comment ) {
 				sql.push(`COMMENT '${d.comment}'`);
@@ -41,7 +40,6 @@ module.exports = {
 			fsp: 0
 		},
 		rules: {
-			type: 'in:time',
 			nullable: 'boolean',
 			comment: 'sql_comment',
 			default: 'sql_time_value',
@@ -53,7 +51,7 @@ module.exports = {
 				sql.push('NOT NULL');
 			}
 			if ( d.default ) {
-				sql.push(`DEFAULT ${d.default}`);
+				sql.push(`DEFAULT '${d.default}'`);
 			}
 			if ( d.comment ) {
 				sql.push(`COMMENT '${d.comment}'`);
@@ -80,12 +78,12 @@ module.exports = {
 			fsp: 'sql_fsp'
 		},
 		generateSQL(d) {
-			let sql = [`DATETIME(${d.fsp})`];
+			let sql = ['DATETIME'];
 			if ( d.nullable === false ) {
 				sql.push('NOT NULL');
 			}
 			if ( d.default ) {
-				sql.push(`DEFAULT ${d.default}`);
+				sql.push(`DEFAULT '${d.default}'`);
 			}
 			if ( d.on_update ) {
 				sql.push(`ON UPDATE ${d.on_update}`);
@@ -120,7 +118,7 @@ module.exports = {
 				sql.push('NOT NULL');
 			}
 			if ( d.default ) {
-				sql.push(`DEFAULT ${d.default}`);
+				sql.push(`DEFAULT '${d.default}'`);
 			}
 			if ( d.on_update ) {
 				sql.push(`ON UPDATE ${d.on_update}`);

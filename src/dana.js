@@ -3,6 +3,7 @@ const _       = require('lodash')
 	, Migrate   = require('./lib/Migrate')
 	, datatypes = require('./datatypes');
 
+
 const dana = {
 	/**
 	 * instance configuration
@@ -51,3 +52,5 @@ module.exports = function(configs = {}, environment = 'development') {
 	}, configs);
 	return instance;
 };
+
+module.exports.datatypes = datatypes;

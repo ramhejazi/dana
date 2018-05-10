@@ -128,11 +128,11 @@ function varChar(type = 'varchar') {
 		category: 'String',
 		generateSQL(d) {
 			let sql = [`${d.type.toUpperCase()}(${d.length})`];
-			if ( d.default ) {
-				sql.push(`DEFAULT '${d.default}'`);
-			}
 			if ( d.nullable === false ) {
 				sql.push('NOT NULL');
+			}
+			if ( d.default ) {
+				sql.push(`DEFAULT '${d.default}'`);
 			}
 			if ( d.charset ) {
 				sql.push(`CHARACTER SET ${d.charset}`);

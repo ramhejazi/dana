@@ -125,7 +125,7 @@ module.exports = {
 	}, 'Floating')
 };
 
-function integer(params = {}) {
+function integer(params) {
 	const defaults = assign({
 		type: undefined,
 		width: undefined,
@@ -158,11 +158,11 @@ function integer(params = {}) {
 			if (d.unsigned === true) {
 				sql.push('UNSIGNED');
 			}
-			if (d.default !== undefined) {
-				sql.push(`DEFAULT ${d.default}`);
-			}
 			if (d.nullable === false) {
 				sql.push('NOT NULL');
+			}
+			if (d.default !== undefined) {
+				sql.push(`DEFAULT ${d.default}`);
 			}
 			// if (d.auto_increment) {
 			// 	sql.push('AUTO_INCREMENT');
@@ -178,7 +178,7 @@ function integer(params = {}) {
 	};
 }
 
-function fixedFloating(params = {}, sub_category = 'Fixed') {
+function fixedFloating(params, sub_category = 'Fixed') {
 	const defaults = assign({
 		precision: 10,
 		scale: 0,
@@ -208,11 +208,11 @@ function fixedFloating(params = {}, sub_category = 'Fixed') {
 			if (d.unsigned === true) {
 				sql.push('UNSIGNED');
 			}
-			if (d.default !== undefined) {
-				sql.push(`DEFAULT ${d.default}`);
-			}
 			if (d.nullable === false) {
 				sql.push('NOT NULL');
+			}
+			if (d.default !== undefined) {
+				sql.push(`DEFAULT ${d.default}`);
 			}
 			// if (d.auto_increment) {
 			// 	sql.push('AUTO_INCREMENT');

@@ -68,7 +68,7 @@ module.exports = class Migrate {
 				return [
 					{
 						type: 'info',
-						message: 'No schema change detected.'
+						message: 'no schema change detected!'
 					}
 				];
 			}
@@ -80,7 +80,7 @@ module.exports = class Migrate {
 				const logs = verbose ? diff.getLogs() : [];
 				logs.push({
 					type: 'success',
-					message: `Successfully created a migration file => ${tildify(filePath)}`
+					message: `successfully created a new migration file => ${tildify(filePath)}`
 				});
 				return logs;
 			});
@@ -100,7 +100,7 @@ module.exports = class Migrate {
 				const batchNo = curBatchNo + 1;
 				const remaining = files.slice(rows.length);
 				if ( remaining.length === 0 ) {
-					return log.info('Already to the latest version!');
+					return log.info('already to the latest version!');
 				}
 				return Promise.reduce(remaining, (p, migrationFile) => {
 					return helpers.readYamlFile(migrationFile.path).then(migration => {
@@ -111,7 +111,7 @@ module.exports = class Migrate {
 				}, 0).then(() => {
 					return [{
 						type: 'success',
-						message: `Successfully executed ${remaining.length} migration files.`
+						message: `successfully executed ${remaining.length} migration files.`
 					}];
 				});
 			});
@@ -210,8 +210,8 @@ module.exports = class Migrate {
 	_ensureDanaTable() {
 		return this._hasTable('dana_migrations').then(has => {
 			if (!has) {
-				log.warn('Missing "dana_migrations" table.');
-				log.info('Creating "dana_migrations" table...');
+				log.warn('missing "dana_migrations" table!');
+				log.info('creating "dana_migrations" table...');
 				return this._createDanaMigrationTable().then(() => {
 					log.success('dana migration table successfully created!');
 				});
@@ -222,7 +222,7 @@ module.exports = class Migrate {
 	/**
 	 * Check existence of a table by querying database
 	 * @param {string} tableName
-	 * @returns {promise->boolean}
+	 * @returns {Promise<boolean>}
 	 */
 	_hasTable(tableName) {
 		return this._query(`
@@ -344,9 +344,9 @@ module.exports = class Migrate {
 		let rowNames = _.map(rows, 'name');
 		let fileNames = _.map(files, 'name');
 		let diff = _.difference(rowNames, fileNames);
-		if (diff.length) {
+		if ( diff.length ) {
 			throw new Error(
-				`currupt migration directory detected. The are ${diff.length} missing migration file(s): ${log.listify(diff)}`
+				`currupt migration directory detected. there are ${diff.length} missing migration file(s): ${log.listify(diff)}`
 			);
 		}
 		let unordered = rowNames.filter((el, index) => {
@@ -354,7 +354,7 @@ module.exports = class Migrate {
 		});
 		if ( unordered.length ) {
 			throw new Error(
-				`corrupt migration directory detected. There are ${unordered.length} out of order migration files: ${log.listify(unordered)}`
+				`corrupt migration directory detected. there are ${unordered.length} out of order migration files: ${log.listify(unordered)}`
 			);
 		}
 	}

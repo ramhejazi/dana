@@ -68,16 +68,16 @@ module.exports = {
 		return glob(glob_path).then(files => this.normalizeFiles(files, read));
 	},
 
-	/**
-	 * Get a list of normalized files in a directory synchronously
-	 * A normalized file is a return value of this.normalizeFiles()
-	 * @param glob_path A path compatible with glob module
-	 * @param read=true Should the files be required?
-	 */
-	requireDirFilesSync(glob_path, read = true) {
-		let files = glob.sync(glob_path);
-		return this.normalizeFiles(files, read);
-	},
+	// /**
+	//  * Get a list of normalized files in a directory synchronously
+	//  * A normalized file is a return value of this.normalizeFiles()
+	//  * @param glob_path A path compatible with glob module
+	//  * @param read=true Should the files be required?
+	//  */
+	// requireDirFilesSync(glob_path, read = true) {
+	// 	let files = glob.sync(glob_path);
+	// 	return this.normalizeFiles(files, read);
+	// },
 
 	/**
 	 * Load contents of a yaml file
