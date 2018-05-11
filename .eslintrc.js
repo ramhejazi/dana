@@ -8,6 +8,10 @@ module.exports = {
         "console": true,
         "process": true,
         "describe": true,
+        "after": true,
+        "afterEach": true,
+        "before": true,
+        "beforeEach": true,
         "it": true
     },
     "extends": "eslint:recommended",
