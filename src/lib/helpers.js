@@ -53,9 +53,17 @@ module.exports = {
 				name: path.basename(filePath, path.extname(filePath)),
 				ext: path.extname(filePath).slice(1),
 				path: filePath,
-				src: read ? require(filePath) : undefined
+				src: read ? this._getFile(filePath) : undefined
 			};
 		});
+	},
+
+	/**
+	 * Simple require the file as a node_module
+	 * This function is a middleware which is mockable in testing!
+	 */
+	_getFile(path) {
+		return require(path);
 	},
 
 	/**

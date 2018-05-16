@@ -115,6 +115,16 @@ class Table {
 		specs.forEach(this.normalizeSpec);
 		return specs;
 	}
+
+	/**
+	 * Is the value a valid table/column name?
+	 * the function uses `sql_table_name` validator
+	 * @param {string} value
+	 * @return {boolean}
+	 */
+	static isValidName(value) {
+		return mitra.checkSync(value, 'sql_table_name').valid;
+	}
 }
 
 module.exports = Table;

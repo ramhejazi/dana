@@ -11,8 +11,8 @@ const expect = require('expect.js');
 const Promise = require('bluebird');
 require('../../../src/loadValidators');
 
-describe('Validators', function() {
-	return helpers.requireDirFiles(validatorsDirPath + '/*.js').then(files => {
+helpers.requireDirFiles(validatorsDirPath + '/*.js').then(files => {
+	describe('Validators', function() {
 		files.forEach((file) => {
 			const { src, name } = file;
 			const validator = src.handler;

@@ -6,7 +6,7 @@
   "license": "MIT",
   "main": "src/dana.js",
   "scripts": {
-    "test:unit": "nyc --reporter=text --reporter=html ./node_modules/mocha/bin/mocha test/unit/*",
+    "test:unit": "nyc --reporter=text --reporter=html ./node_modules/mocha/bin/mocha --reporter=min test/unit/*",
     "test:integration": "./test/integration/bootstrap.sh",
     "mkdoc": "node ./src/scripts/docs.js"
   },

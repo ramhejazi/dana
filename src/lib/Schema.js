@@ -1,12 +1,13 @@
 const fs       = require('fs-extra')
 	, Promise    = require('bluebird')
+	, _          = require('lodash')
+	, __         = require('util').format
 	, Table      = require('./Table')
-	, DanaError  = require('../errors').DanaError
 	, path       = require('path')
 	, shortid    = require('shortid')
-	, _          = require('lodash')
 	, log        = require('./log')
 	, helpers    = require('./helpers')
+	, messages   = require('../messages/en').schema
 	, tildify    = require('tildify');
 
 /**
@@ -26,13 +27,13 @@ module.exports = class Schema {
 
 	/**
 	* Creates dana required directories and danafile.js (config) file
-	* @param {boolean} verbose Logging flag, when `true` main actions are reported
+	* @param {boolean} verbose Logging flag, when `true` all actions are reported
 	* @returns {Promise}
 	*/
 	init(verbose) {
 		return Promise.all([
-			this._ensureDirectories(verbose),
-			this._createDanaFile(verbose)
+			this._ensureDanaConfigFile(verbose),
+			this._ensureDanaDirectories(verbose)
 		]);
 	}
 
@@ -40,71 +41,21 @@ module.exports = class Schema {
 	 * Create danafile.js by copying ../danafile.js template file
 	 * @returns {Promise}
 	 */
-	_createDanaFile() {
-		return fs.copy(
-			path.join(__dirname, '..', 'danafile.js'),
-			path.join(this.config('baseDir'), 'danafile.js')
-		).then(() => {
-			log.success('Created danafile.js successfully.');
-		});
-	}
-
-	/**
-	 * Create model files by using tableNames
-	 * @param   {array} tableNames array of table names
-	 * @returns {Promise}
-	 */
-	createModels(tableNames, verbose) {
-		// filter invalid table names
-		const invalids = tableNames.reduce((ret, tableName) => {
-			if ( !Table.isValidName(tableName) )
-				ret.push(tableName);
-			return ret;
-		}, []);
-
-		if (invalids.length) {
-			return Promise.reject(
-				new DanaError(
-					`can't create models for following table names: ${log.listify(invalids)} \ntable names should match ${Table.getNameRegex()} regular expression. aborting!`
-				)
-			);
-		}
-
-		if ( verbose ) {
-			log.info(`${tableNames.length} model(s) will be created: ${log.listify(tableNames)}`);
-		}
-
-		return this._getCurrentTableNames(verbose).then(currentTables => {
-			const currentTableNames = _.map(currentTables, 'tableName');
-			const currentModelFileNames = _.map(currentTables, 'filename');
-
-			const duplicateTableNames = tableNames.filter(name => currentTableNames.includes(name));
-			if (duplicateTableNames.length) {
-				throw new DanaError(
-					`there are existent model files for following table names: ${log.listify(duplicateTableNames)}`
-				);
+	_ensureDanaConfigFile() {
+		const configFilePath = this.getDanaConfigFilePath();
+		return fs.pathExists(configFilePath).then(exists => {
+			if ( exists ) {
+				log.warn( __(messages.CONFIG_FILE_EXISTS, tildify(configFilePath)) );
+			} else {
+				return fs.copy(
+					this.getOriginalDanaConfigFilePath(),
+					configFilePath
+				).then(() => {
+					log.success( messages.CONFIG_FILE_CREATED );
+				});
 			}
-
-			const duplicateModelFileNames = tableNames.filter(name => currentModelFileNames.includes(name));
-
-			if (duplicateModelFileNames.length) {
-				throw new DanaError(
-					`cannot create model(s) for the following table(s): ${log.listify(duplicateModelFileNames)} \nReason: There is/are already existent file(s) with .js extension for the specified table(s) and creating new model(s) will overwrite it/them!`
-				);
-			}
-
-			const baseDir = this.dana.config('baseDir');
-			const fileDetails = tableNames.map(tableName => {
-				return {
-					path: path.join(baseDir, 'models', tableName + '.js'),
-					tableName
-				};
-			});
-			return Promise.map(fileDetails, (file) => {
-				let model = this._defineBaseModel(file.tableName);
-				return fs.writeFile(file.path, model).then(() => file);
-			});
 		});
+
 	}
 
 	/**
@@ -112,27 +63,35 @@ module.exports = class Schema {
 	* Create directory that doesn't exist in the target project base directories
 	* @return {Promise}
 	*/
-	_ensureDirectories(verbose) {
+	_ensureDanaDirectories(verbose) {
+		if ( verbose ) {
+			log.info( messages.ENSURING_DIRS );
+		}
 		return Promise.each(['models', 'migrations'], dir => {
-			const dirPath = path.join(this.config('baseDir'), dir);
+			const dirPath = path.join(this.dana.config('baseDir'), dir);
 			return fs.pathExists(dirPath).then(exists => {
 				if ( exists ) {
-					if (verbose)
-						log.warn(`Directory "${tildify(dirPath)}" already exists!`);
-					return;
+					log.warn( __(messages.DIR_EXISTS, tildify(dirPath)) );
 				} else {
-					if (verbose)
-						log.info(`Creating missing directory "${tildify(dirPath)}" ...`);
+					if ( verbose ) {
+						log.info( __(messages.CREATING_DIR, tildify(dirPath)) );
+					}
 					return fs.ensureDir(dirPath).then(() => {
-						log.success(`Directory "${tildify(dirPath)}" created!`);
+						log.success( __(messages.DIR_CREATED, tildify(dirPath)) );
 					});
 				}
 			});
 		});
 	}
 
+	/**
+	 * Get project models and parse/validate them
+	 * @return {Promise<object|error>}
+	 * @property {object} returned.parsed   Collection of parsed models
+	 * @property {object} returned.original Collection of raw models
+	 */
 	getModels() {
-		return this._getModelFiles().then(models => {
+		return this.requireModelFiles().then(models => {
 			return Promise.map(models, (modelFile) => {
 				return new Table(modelFile).parse();
 			}).then(parsedModels => {
@@ -149,20 +108,25 @@ module.exports = class Schema {
 	/**
 	 * Get current `tableName`s by analyzing models.
 	 * it reads and returns the "tableName" and file "name"s of the models
-   * as an array of objects
-	 * @returns {array}
+	 * as an array of objects
+	 * @return {array}
 	 */
-	_getCurrentTableNames(verbose) {
-		return this._getModelFiles().then(files => {
+	getModelTableNames(verbose) {
+		return this.requireModelFiles().then(files => {
 			return files.map(file => {
-				let fileSrcType = helpers.getType(file.src);
-				let tableName;
+				const fileSrcType = helpers.getType(file.src);
+				const tableName = file.src.tableName;
 				if ( verbose && fileSrcType !== 'object' ) {
-					log.warn(`model "${file.name}" exports a(n) "${fileSrcType}" instead of an object.`);
+					log.warn(__(messages.INVALID_MODEL_EXPORTED_CONTENT,
+						tildify(file.path),
+						fileSrcType
+					));
 				} else {
-					tableName = file.src.tableName;
 					if ( verbose && tableName !== file.name ) {
-						log.warn(`model "${file.name}"'s filename is not equal to it's tableName "${tableName}"`);
+						log.warn(__(messages.MODEL_NAME_NOT_EQUAL_TO_TABLENAME,
+							tildify(file.path),
+							tableName
+						));
 					}
 				}
 				return {
@@ -174,34 +138,153 @@ module.exports = class Schema {
 	}
 
 	/**
-	 * Generates basic contents of a model
-	 * @param  {string} tableName
-	 * @return {string} contents for the new model
+	 * Create model files by using tableNames
+	 * @param   {array} tableNames array of table names
+	 * @returns {Promise}
 	 */
-	_defineBaseModel(tableName) {
-		const id = shortid.generate();
-		const model = JSON.stringify({
-			tableName,
-			schema: {
-				columns: {}
-			},
-			_fid: id
-		}, null, 4).replace(/"([^(")"]+)":/g, '$1:');
+	createModels(tableNames, verbose) {
+		// filter invalid table names
+		const invalids = tableNames.filter(tableName => {
+			return !Table.isValidName(tableName);
+		});
 
-		return `module.exports = ${model}`;
+		if ( invalids.length ) {
+			log.fail(__(
+				messages.INAVLID_TABLE_NAMES,
+				log.listify(invalids)
+			), true);
+			// uncessary as the log.fail will terminate the process
+			// just for the sake of testing!
+			return Promise.resolve(invalids);
+		}
+
+		if ( verbose ) {
+			log.info(__(
+				messages.CREATING_MODELS,
+				tableNames.length,
+				log.listify(tableNames.map(el => el + '.js'))
+			));
+		}
+
+		return this.getModelTableNames(verbose).then(cTables => {
+			const cTableNames = _.map(cTables, 'tableName');
+			const cModelFileNames = _.map(cTables, 'filename');
+			/**
+			 * Check already existing models against new table names
+			 */
+			const dTableNames = tableNames.filter(name => {
+				return cTableNames.includes(name);
+			});
+
+			if ( dTableNames.length ) {
+				log.fail(__(
+					messages.EXISTING_MODEL_FOR_TABLES,
+					log.listify(dTableNames)
+				), true);
+				// just for testing!
+				return dTableNames;
+			}
+
+			// Get models that have similar file names (tableNames)
+			// with different tableNames
+			const dFiles = tableNames.filter(name => {
+				return cModelFileNames.includes(name);
+			});
+
+			if ( dFiles.length ) {
+				log.fail(__(
+					messages.EXISTING_MODEL_NAMES,
+					log.listify(dFiles)
+				), true);
+				return dFiles;
+			}
+
+			/**
+			 * Evrything is okay to create new the tables
+			 */
+			return Promise.map(tableNames, (tableName) => {
+				return this._createModel(tableName);
+			});
+		});
+	}
+
+	/**
+	 * Create a new model
+	 * @param {string} tableName
+	 * e
+	 * @return {Promise<object>}
+	 * @property {string} path Path of the created file
+	 * @property {string} tableName
+	 */
+	_createModel(tableName) {
+		const modelPath = this.getModelPathForTableName(tableName);
+		const modelContent = this.constructor.defineBaseModel(tableName);
+		return fs.writeFile(modelPath, modelContent).then(() => {
+			return { path: modelPath, tableName};
+		});
+	}
+
+	/**
+	 * Get absolute file path for a model by it's tableName
+	 * @return {string}
+	 */
+	getModelPathForTableName(tableName) {
+		return path.join(this.getModelsDirPath(), tableName) + '.js';
 	}
 
 	/**
 	* Get absolute path of target project's "models" directory.
 	* @return {string}
 	*/
-	_getModelsPath() {
+	getModelsDirPath() {
 		return path.join(this.dana.config('baseDir'), 'models');
 	}
 
-	_getModelFiles() {
-		let modelsDir = this._getModelsPath();
+	requireModelFiles() {
+		let modelsDir = this.getModelsDirPath();
 		return helpers.requireDirFiles(modelsDir + '/*.js');
+	}
+
+	/**
+	 * Return danafile.js path by using `baseDir` option
+	 * @return {string}
+	 */
+	getDanaConfigFilePath() {
+		return path.join(this.dana.config('baseDir'), 'danafile.js');
+	}
+
+	/**
+	 * Return danafile.js path by using `baseDir` option
+	 * @return {string}
+	 */
+	getOriginalDanaConfigFilePath() {
+		return path.join(__dirname, '..', 'danafile.js');
+	}
+
+
+	/**
+	 * Generates basic contents of a model
+	 * @param  {string} tableName
+	 * @param {boolean} raw Don't stringify the object return the raw model
+	 * @return {string} contents for the new model
+	 */
+	static defineBaseModel(tableName, raw = false) {
+		const id = shortid.generate();
+		const model = {
+			tableName,
+			schema: {
+				columns: {}
+			},
+			_fid: id
+		};
+		if ( raw ) {
+			return model;
+		}
+		const fileContent = JSON
+			.stringify(model, null, 4);
+			//.replace(/"([^(")"]+)":/g, '$1:');
+
+		return `module.exports = ${fileContent}`;
 	}
 
 };
