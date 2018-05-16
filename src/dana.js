@@ -1,4 +1,5 @@
-const _       = require('lodash')
+const
+	_           = require('lodash')
 	, Schema    = require('./lib/Schema')
 	, Migrate   = require('./lib/Migrate')
 	, datatypes = require('./datatypes');
@@ -37,8 +38,6 @@ const dana = {
  * @param {object} configs
  * @param {string} configs.baseDir base directory of project
  * @param {object} configs.connection
- * @param {string} configs.defaultCharset = 'utf8mb4'
- * @param {string} configs.defaultCollation = 'utf8mb4_unicode_ci'
  * @param {string} environment = 'development'
  *
  * @return {object} dana instance
