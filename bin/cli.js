@@ -47,7 +47,7 @@ const util = {
 		if ( e instanceof ValidationError ) {
 			this.echoMitraValidationError(e);
 		} else {
-			log.fail(e.name + ' '  + e.message || e);
+			log.fail(e.name + ' '  + e.message);
 		}
 		process.exit(1);
 	},
