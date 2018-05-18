@@ -1,7 +1,7 @@
 {
   "name": "dana",
-  "version": "0.5.0",
-  "description": "A simple migration library and CLI app",
+  "version": "0.5.1",
+  "description": "A simple database migration tool!",
   "author": "Ram Hejazi",
   "license": "MIT",
   "main": "src/dana.js",
