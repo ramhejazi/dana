@@ -24,8 +24,14 @@ module.exports = {
 
 	mockDana(cwd) {
 		return {
+			env: 'testing',
 			__configs: {
-				baseDir: cwd
+				baseDir: cwd,
+				connection: {
+					user: 'test_db_user',
+					password: 'secret_password',
+					database: 'test_db'
+				}
 			},
 			config(configName) {
 				return configName === undefined

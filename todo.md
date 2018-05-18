@@ -4,3 +4,4 @@ addition to create table statements.
 - Make sure all regexes (including index validator regexes) is tested!
 - Improve error messages of sql_time_value validator!
 - Escape mysql table comments and default values!
+- Check logs of Schema class functions

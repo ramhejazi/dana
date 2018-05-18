@@ -5,8 +5,8 @@ set -x
 LOG_FILE=/vagrant/vagrant_build.log
 
 DB_ROOT_PASSWORD=secret_password
-DB_NAME=dana
-DB_USER=dana
+DB_NAME=test_db
+DB_USER=test_db_user
 DB_USER_PASS=secret_password
 
 rm $LOG_FILE && touch $LOG_FILE

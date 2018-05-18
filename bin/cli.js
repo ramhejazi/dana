@@ -114,7 +114,7 @@ const util = {
 		const config = danaFile[environment];
 
 		if (!config) {
-			log.fail('unable to read danafile config!', true);
+			log.fail(`unable to read danafile configuration for "${environment}"!`, true);
 		}
 
 		if (argv.debug !== undefined) config.debug = argv.debug;

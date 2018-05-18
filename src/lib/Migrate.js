@@ -1,5 +1,6 @@
 const Diff  = require('./Diff')
 	, _       = require('lodash')
+	, __         = require('util').format
 	, helpers = require('./helpers')
 	, fs      = require('fs-extra')
 	, path    = require('path')
@@ -7,6 +8,7 @@ const Diff  = require('./Diff')
 	, mysql   = require('mysql2/promise')
 	, sql     = require('./sql')
 	, Promise = require('bluebird')
+	, messages   = require('../messages/en').migrate
 	, log     = require('./log')
 	, Table   = require('./Table')
 	, yaml    = require('js-yaml');
@@ -58,31 +60,24 @@ module.exports = class Migrate {
 	 * @param {boolean} verbose Log main actions
 	 * @returns {Promise}
 	 */
-	_make(verbose = false) {
+	_make() {
 		return Promise.all([
 			this.dana.schema.getModels(),
 			this.getLastMigrationSpecs()
-		]).spread((cSpecs, oldSchema = []) => {
-			const diff = new Diff(oldSchema, cSpecs.parsed);
+		]).spread((modelSpecs, lastSpecs) => {
+			const diff = new Diff(lastSpecs, modelSpecs.parsed);
 			if ( !diff.hasChanged() ) {
-				return [
-					{
-						type: 'info',
-						message: 'no schema change detected!'
-					}
-				];
+				return log.info(messages.NO_DIFF, true);
 			}
-			const data = diff.getMigrationData();
-			data.specs = JSON.stringify(cSpecs.original);
-			const filename = helpers.createMigrationFileName(diff) + '.yml';
-			const filePath = path.join(this.dana.config('baseDir'), 'migrations', filename);
-			return fs.writeFile(filePath, yaml.safeDump(data)).then(() => {
-				const logs = verbose ? diff.getLogs() : [];
-				logs.push({
-					type: 'success',
-					message: `successfully created a new migration file => ${tildify(filePath)}`
-				});
-				return logs;
+			const data = Object.assign(diff.getMigrationData(), {
+				specs: JSON.stringify(modelSpecs.original)
+			});
+			return this._createMigrationFile(data).then(filePath => {
+				log.success(__(
+					messages.CREATED_MIGRATION_FILE,
+					tildify(filePath)
+				), true);
+				return filePath;
 			});
 		});
 	}
@@ -95,24 +90,24 @@ module.exports = class Migrate {
 	_latest(verbose) {
 		return this._ensureDanaTable(verbose)
 			.then(() => this.getMigrationData())
-			.then(([rows, files]) => {
-				const curBatchNo = rows.length > 0 ? +_.last(rows).batch : 0;
-				const batchNo = curBatchNo + 1;
-				const remaining = files.slice(rows.length);
-				if ( remaining.length === 0 ) {
-					return log.info('already to the latest version!');
+			.spread((rows, files) => {
+				const batchNo = (rows.length > 0 ? +_.last(rows).batch : 0) + 1;
+				const remainingFiles = files.slice(rows.length);
+				if ( remainingFiles.length === 0 ) {
+					return log.info(messages.ALREADY_MIGRATED, true);
 				}
-				return Promise.reduce(remaining, (p, migrationFile) => {
+				return Promise.reduce(remainingFiles, (p, migrationFile) => {
 					return helpers.readYamlFile(migrationFile.path).then(migration => {
 						return this._query(migration.up).then(() => {
-							return this._addMigrationRow(batchNo, migrationFile);
+							return this._addMigrationRow(batchNo, migrationFile.name);
 						});
 					});
 				}, 0).then(() => {
-					return [{
-						type: 'success',
-						message: `successfully executed ${remaining.length} migration files.`
-					}];
+					log.success(__(
+						messages.MIGRATED_TO_LATEST,
+						remainingFiles.length,
+						batchNo
+					), true);
 				});
 			});
 	}
@@ -125,9 +120,9 @@ module.exports = class Migrate {
 	_rollback(verbose) {
 		return this._ensureDanaTable(verbose)
 			.then(() => this.getMigrationData())
-			.then(([rows, files]) => {
+			.spread((rows, files) => {
 				if ( rows.length === 0 ) {
-					return log.info('No migrated data to downgrade!');
+					return log.info('No migrated data to downgrade!', true);
 				}
 				const lastBatchNo = rows.length > 0 ? +_.last(rows).batch : 0;
 				const rollbackRows = rows.filter(row => {
@@ -146,74 +141,68 @@ module.exports = class Migrate {
 				return Promise.reduce(rollbackFiles.reverse(), (ret, migrationFile) => {
 					return helpers.readYamlFile(migrationFile.path).then(migration => {
 						return this._query(migration.down).then(() => {
-							return this._removeMigrationRow(migrationFile);
+							return this._removeMigrationRow(migrationFile.name);
 						});
 					});
 				}, 0).then(() => {
-					return [{
-						type: 'success',
-						message: `Successfully rollbacked ${rollbackFiles.length} migration files. Batch number was "${lastBatchNo}".`
-					}];
+					log.success(__(
+						messages.ROLLBACKED_MIGRATIONS,
+						rollbackFiles.length,
+						lastBatchNo
+					));
 				});
 			});
 	}
 
 	/**
-	 * Format SQL by replacing :placeholders with escaped corresponding values
-	 * @param {string} query Query to be modified
-	 * @param {object} values Values as `key:value` pairs. Each matching :placeholder
-	 * with `key` is replaced with key's value.
-	 *
-	 * @example
-	 * 	_formatSQL('select * from :tableName;', { tableName: 'tests' })
-	 *  // select * from tests;
+	 * Create a new migration file
+	 * @param {object} data
+	 * @property {string} up Up SQL
+	 * @property {string} down Down SQL
+	 * @property {string} specs JSON representation of the currect models
 	 */
-	_formatSQL(query, values) {
-		if (!values) return query;
-		return query.replace(/:(\w+)/g, (txt, key) => {
-			if (values.hasOwnProperty(key)) {
-				return this._connection.escape(values[key]);
-			}
-			return txt;
-		});
+	_createMigrationFile(data) {
+		const filename = helpers.createMigrationFileName() + '.yml';
+		const filePath = path.join(this.dana.config('baseDir'), 'migrations', filename);
+		return fs.writeFile(filePath, yaml.safeDump(data)).then(() => filePath);
 	}
 
 	/**
 	 * Add migration row for a ran executed migration file
 	 * This function is called once for each migration file
 	 * @param {number} batchNumber Number of the current group/batch of migration files
-	 * @param {object} migrationFile An object representing a migration file
+	 * @param {object} migrationName Name of migration
 	 * @returns {Promise}
 	 */
-	_addMigrationRow(batchNumber, migrationFile) {
+	_addMigrationRow(batchNumber, migrationName) {
 		return this._query('INSERT INTO dana_migrations(name, batch) VALUES(:name, :batch)', {
-			name: migrationFile.name,
+			name: migrationName,
 			batch: batchNumber
 		});
 	}
 
 	/**
 	 * Remove a migration row from dana_migrations table based on file name
-	 * @param {object} migrationFile An object representing a migration file
+	 * @param {object} migrationName Name of migration
 	 * @returns {Promise}
 	 */
-	_removeMigrationRow(migrationFile) {
-		return this._query('DELETE FROM dana_migrations where name=:name', {
-			name: migrationFile.name
+	_removeMigrationRow(migrationName) {
+		return this._query('DELETE FROM `dana_migrations` where name=:name', {
+			name: migrationName
 		});
 	}
 
 	/**
-	 * Make sure dana_migration table exists, if it does't exist, create it
+	 * Make sure dana_migrations table exists, if it does't exist, create it
 	 * @returns {Promise}
 	 */
 	_ensureDanaTable() {
 		return this._hasTable('dana_migrations').then(has => {
 			if (!has) {
-				log.warn('missing "dana_migrations" table!');
-				log.info('creating "dana_migrations" table...');
+				log.warn('missing "dana_migrations" table detected!');
+				log.info('creating "dana_migrations" table ...');
 				return this._createDanaMigrationTable().then(() => {
-					log.success('dana migration table successfully created!');
+					log.success('required dana migration table (`dana_migrations`) successfully created!');
 				});
 			}
 		});
@@ -225,52 +214,9 @@ module.exports = class Migrate {
 	 * @returns {Promise<boolean>}
 	 */
 	_hasTable(tableName) {
-		return this._query(`
-			SELECT *
-			FROM information_schema.tables
-			WHERE table_schema = :database
-			AND table_name = :tableName
-			LIMIT 1;
-		`, {
-			database: this.dana.config('connection.database'),
-			tableName
-		}).then(rows => {
+		return this._query(`SHOW TABLES LIKE '${tableName}';`).then(rows => {
 			return rows.length > 0;
 		});
-	}
-
-	/**
-	 * Execute a SQL query
-	 * @param {string} query
-	 * @param {object} values
-	 * @returns {Promise<any>}
-	 */
-	_query(query, values) {
-		return this._connection.query(this._formatSQL(query, values)).then(([rows]) => rows);
-	}
-
-	/**
-	 * Create a mysql2 connection by using user-defined configuration
-	 * @returns {Promise}
-	 */
-	_createConnection() {
-		const conConfig = this.dana.config('connection');
-		if (!conConfig) {
-			throw `Missing database connection configuation for the ${this.dana.env} environment!`;
-		}
-		conConfig.Promise = Promise;
-		conConfig.multipleStatements = true;
-		return mysql.createConnection(conConfig).then(connection => {
-			this._connection = connection;
-		});
-	}
-
-	/**
-	 * Close an active mysql2 connection to database
-	 * @returns {Promise}
-	 */
-	_endConnection() {
-		return this._connection.end();
 	}
 
 	/**
@@ -295,8 +241,8 @@ module.exports = class Migrate {
 	 * Get dana_migrations table's rows, sorted by `batch` field in ascending order
 	 * @returns {Promise}
 	 */
-	getRunMigrationList() {
-		return this._query('SELECT * FROM dana_migrations ORDER BY batch asc;');
+	getMigrationRows() {
+		return this._query('SELECT * FROM `dana_migrations` ORDER BY `batch` ASC;');
 	}
 
 
@@ -313,7 +259,7 @@ module.exports = class Migrate {
 
 	/**
 	 * Get, normalize and return `specs` property of the last migration file
-	 * @returns {Promise<array>}
+	 * @returns {Promise<object>}
 	 */
 	getLastMigrationSpecs() {
 		return this.getMigrationFiles().then(files => {
@@ -326,37 +272,107 @@ module.exports = class Migrate {
 	}
 
 	/**
-	 * Get, validate and return dana_migration table's rows and migration files
+	 * Get, validate and return dana_migrations table's rows and migration files
 	 * @returns {Promise<array>} index 0: migration rows, index 1: migration files
 	 */
 	getMigrationData() {
 		return Promise.all([
-			this.getRunMigrationList(),
+			this.getMigrationRows(),
 			this.getMigrationFiles()
-		]).tap(([rows, files]) => this.constructor.validateMigrationData(rows, files));
+		]).tap(([rows, files]) => {
+			this.constructor.validateMigrationData(rows, files);
+		});
 	}
 
 	/**
 	 * Validate migration data for making sure migration rows and files
 	 * are untouched
+	 * @param {array} rows Current dana_migrations rows
+	 * @param {array} files Current normalized migration files
 	 */
 	static validateMigrationData(rows, files) {
-		let rowNames = _.map(rows, 'name');
-		let fileNames = _.map(files, 'name');
-		let diff = _.difference(rowNames, fileNames);
+		const rowNames = _.map(rows, 'name');
+		const fileNames = _.map(files, 'name');
+
+		// check missing migration files
+		const diff = _.difference(rowNames, fileNames);
 		if ( diff.length ) {
-			throw new Error(
-				`currupt migration directory detected. there are ${diff.length} missing migration file(s): ${log.listify(diff)}`
-			);
+			throw new Error(__(
+				messages.CURRUPT_MIGRATION_DIR,
+				diff.length,
+				log.listify(diff.map(o => o + '.yml'))
+			));
 		}
-		let unordered = rowNames.filter((el, index) => {
+
+		// check unordered list of migrations
+		const unordered = rowNames.filter((el, index) => {
 			return fileNames.indexOf(el) !== index;
 		});
 		if ( unordered.length ) {
-			throw new Error(
-				`corrupt migration directory detected. there are ${unordered.length} out of order migration files: ${log.listify(unordered)}`
-			);
+			throw new Error(__(
+				messages.UNORDERED_MIGRATION_FILES,
+				unordered.length,
+				log.listify(unordered.map(o => o + '.yml'))
+			));
 		}
 	}
 
+	/**
+	 * Format SQL by replacing :placeholders with escaped corresponding values
+	 * @see https://github.com/mysqljs/mysql#custom-format
+	 * @param {string} query Query to be modified
+	 * @param {object} values Values as `key:value` pairs. Each matching :placeholder
+	 * with `key` is replaced with key's value.
+	 *
+	 * @example
+	 * 	formatSQL('select * from :tableName;', { tableName: 'tests' })
+	 *  // select * from tests;
+	 */
+	_formatSQL(query, values) {
+		if (!values) return query;
+		return query.replace(/:(\w+)/g, (txt, key) => {
+			if (values.hasOwnProperty(key)) {
+				return this._connection.escape(values[key]);
+			}
+			return txt;
+		});
+	}
+
+	/**
+	 * Create a mysql2 connection by using user-defined configuration
+	 * @returns {Promise}
+	 */
+	_createConnection() {
+		const conConfig = this.dana.config('connection');
+		if (!conConfig) {
+			throw new Error(__(
+				messages.MISSING_DB_CONFIG,
+				this.dana.env
+			));
+		}
+		conConfig.Promise = Promise;
+		conConfig.multipleStatements = true;
+		return mysql.createConnection(conConfig).then(connection => {
+			this._connection = connection;
+		});
+	}
+
+	/**
+	 * Close an active mysql2 connection to database
+	 * @returns {Promise}
+	 */
+	_endConnection() {
+		return this._connection.end();
+	}
+
+	/**
+	 * Execute a SQL query
+	 * @param {string} query
+	 * @param {object} values
+	 * @returns {Promise<any>}
+	 */
+	_query(query, values) {
+		let queryStr = this._formatSQL(query, values);
+		return this._connection.query(queryStr).then(([rows]) => rows);
+	}
 };

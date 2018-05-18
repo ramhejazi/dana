@@ -36,8 +36,8 @@ const dana = {
 /**
  * @constructor for creating a dana instance
  * @param {object} configs
- * @param {string} configs.baseDir base directory of project
- * @param {object} configs.connection
+ * @property {string} configs.baseDir base directory of project
+ * @property {object} configs.connection
  * @param {string} environment = 'development'
  *
  * @return {object} dana instance
