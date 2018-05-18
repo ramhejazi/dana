@@ -6,7 +6,8 @@
   "license": "MIT",
   "main": "src/dana.js",
   "scripts": {
-    "test:unit": "nyc --reporter=text --reporter=html ./node_modules/mocha/bin/mocha --reporter=min test/unit/*",
+    "test": "nyc --reporter=text --reporter=html ./node_modules/mocha/bin/mocha test/unit/*",
+    "coverage": "nyc report --reporter=text-lcov | coveralls",
     "test:integration": "./test/integration/bootstrap.sh",
     "mkdoc": "node ./src/scripts/docs.js"
   },
@@ -59,6 +60,7 @@
     "v8flags": "^2.1.1"
   },
   "devDependencies": {
+    "coveralls": "^3.0.1",
     "expect.js": "^0.3.1",
     "mocha": "^3.4.2",
     "mock-fs": "^4.4.2",
