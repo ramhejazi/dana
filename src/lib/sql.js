@@ -42,7 +42,7 @@ module.exports = {
 	},
 
 	dropTable(tbl) {
-		return `DROP TABLE \`${tbl};\``;
+		return `DROP TABLE \`${tbl}\`;`;
 	},
 
 	addColumn(tbl, col, spec) {
