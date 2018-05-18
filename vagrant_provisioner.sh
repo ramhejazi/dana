@@ -15,7 +15,7 @@ echo -e "--- Initial update... ---"
 apt-get update
 
 echo -e "--- Installing basic packages... ---"
-apt-get install -y curl build-essential git htop vim python-software-properties >> $LOG_FILE 2>&1
+apt-get install -y curl build-essential git zsh htop vim python-software-properties >> $LOG_FILE 2>&1
 
 # MySQL setup
 echo -e "--- Installing MySQL server ---"
