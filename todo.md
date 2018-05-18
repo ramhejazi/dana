@@ -5,3 +5,4 @@ addition to create table statements.
 - Improve error messages of sql_time_value validator!
 - Escape mysql table comments and default values!
 - Check logs of Schema class functions
+- Add more logging in verbose mode for Migrate class main methods!

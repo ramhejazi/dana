@@ -6,6 +6,7 @@ const Diff  = require('./Diff')
 	, path    = require('path')
 	, tildify = require('tildify')
 	, mysql   = require('mysql2/promise')
+	, chalk   = require('chalk')
 	, sql     = require('./sql')
 	, Promise = require('bluebird')
 	, messages   = require('../messages/en').migrate
@@ -49,7 +50,11 @@ module.exports = class Migrate {
 	 * @returns {Promise}
 	 */
 	_runWithConnection(cmd, verbose) {
-		return this._createConnection().then(() => {
+		return this._createConnection().catch(e => {
+			log.fail(__(messages.DB_CONNECTION_ERROR, chalk.underline(e.message)), true);
+			// just for testing purposes! log.fail exit the process in normal use!
+			throw new Error('DB_CONNECTION_ERROR');
+		}).then(() => {
 			return this['_' + cmd](verbose);
 		}).tap(() => this._endConnection());
 	}
@@ -122,9 +127,9 @@ module.exports = class Migrate {
 			.then(() => this.getMigrationData())
 			.spread((rows, files) => {
 				if ( rows.length === 0 ) {
-					return log.info('No migrated data to downgrade!', true);
+					return log.info(messages.NO_ROWS_TO_ROLLBACK, true);
 				}
-				const lastBatchNo = rows.length > 0 ? +_.last(rows).batch : 0;
+				const lastBatchNo = +_.last(rows).batch;
 				const rollbackRows = rows.filter(row => {
 					return lastBatchNo === +row.batch;
 				});
@@ -134,8 +139,12 @@ module.exports = class Migrate {
 				});
 
 				if ( verbose ) {
-					log.info(`Rollbacking ${rollbackRows.length} migrations with batch number of "${lastBatchNo}".`);
-					log.info(`Migration file names are: \n - ${rollbackFileNames.join('\n - ')}`);
+					log.info(__(
+						messages.ROLLBACKING,
+						rollbackRows.length,
+						lastBatchNo,
+						log.listify(rollbackFiles.map(el => el.path))
+					));
 				}
 
 				return Promise.reduce(rollbackFiles.reverse(), (ret, migrationFile) => {
@@ -149,7 +158,7 @@ module.exports = class Migrate {
 						messages.ROLLBACKED_MIGRATIONS,
 						rollbackFiles.length,
 						lastBatchNo
-					));
+					), true);
 				});
 			});
 	}

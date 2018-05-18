@@ -2,7 +2,6 @@
 
 const Liftoff 				= require('liftoff')
 	, ValidationError 	= require('mitra').ValidationError
-	, DanaError 				= require('../src/errors').DanaError
 	, _ 								= require('lodash')
 	, fs 								= require('fs-extra')
 	, commander					= require('commander')
@@ -45,15 +44,10 @@ const util = {
 	 * @param {object|string} e an error object or an error message
 	 */
 	exit(e) {
-		if ( e instanceof DanaError ) {
-			log.fail(`${e.message || e}`);
-			if ( e.file ) {
-				log.fail(`\nfile: ${e.file.path}`);
-			}
-		} else if ( e instanceof ValidationError ) {
+		if ( e instanceof ValidationError ) {
 			this.echoMitraValidationError(e);
 		} else {
-			console.log(e);
+			log.fail(e.name + ' '  + e.message || e);
 		}
 		process.exit(1);
 	},

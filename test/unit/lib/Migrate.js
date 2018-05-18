@@ -9,14 +9,12 @@ const
 	, _ = require('lodash')
 	, __ = require('util').format
 	, mocker = require('../_mocker')
-	, tildify = require('tildify')
 	, yaml    = require('js-yaml')
 	, log = require('../../../src/lib/log')
 	, FAKE_DIR = '/home/username/fake_dir';
 
 /**
  * Create a Migrate instance
- * This function exist for reading test cleaner!
  */
 function migrate() {
 	return new Migrate(mocker.mockDana(FAKE_DIR));
@@ -191,7 +189,15 @@ describe('lib/Migrate', function() {
 	});
 
 	describe('._createConnection()', function() {
-		it('should throw an error when there is db config', function() {
+		before(function() {
+			mocker.mockLogger();
+		});
+
+		after(function() {
+			mocker.unmockLogger();
+		});
+
+		it('should throw an error when there is no db config', function() {
 			const instance = migrate();
 			instance.dana.__configs.connection = null;
 			expect(instance._createConnection.bind(instance)).to.throwException(e => {
@@ -199,6 +205,14 @@ describe('lib/Migrate', function() {
 					messages.MISSING_DB_CONFIG,
 					'testing'
 				));
+			});
+		});
+
+		it('sibling method ._runWithConnection() should catch mysql connection error, log it and exit the process after!', function() {
+			const instance = migrate();
+			instance.dana.__configs.connection = { user: 'nonexistent' };
+			instance._runWithConnection().catch(e => {
+				expect(e.message).to.eql('DB_CONNECTION_ERROR');
 			});
 		});
 
@@ -327,7 +341,6 @@ describe('lib/Migrate', function() {
 	});
 
 	describe('_make', function() {
-
 		before(function() {
 			mocker.mockLogger();
 			mocker.mockFs({
@@ -361,17 +374,16 @@ describe('lib/Migrate', function() {
 				});
 			});
 		});
-
 	});
 
 
-	describe('_latest() & _rollback()', function() {
+	describe('_latest() && _rollback()', function() {
 		before(function() {
-			const first = new Diff([], [
+			const firstFile = new Diff([], [
 				Schema.defineBaseModel('posts', true)
 			]).getMigrationData();
 
-			const second = new Diff([], [
+			const secondFile = new Diff([], [
 				Schema.defineBaseModel('tags', true)
 			]).getMigrationData();
 
@@ -379,8 +391,8 @@ describe('lib/Migrate', function() {
 			mocker.mockFs({
 				[FAKE_DIR]: {
 					'migrations': {
-						'2018_12_08_02_02.yml': yaml.safeDump(first),
-						'2018_12_08_02_03.yml': yaml.safeDump(second)
+						'2018_12_08_02_02.yml': yaml.safeDump(firstFile),
+						'2018_12_08_02_03.yml': yaml.safeDump(secondFile)
 					}
 				}
 			});
@@ -391,7 +403,7 @@ describe('lib/Migrate', function() {
 			mocker.unMockFs();
 		});
 
-		it('should run remaining migration files', function() {
+		it('latest - should run remaining migration files', function() {
 			const instance = migrate();
 			const runArgs = ['green', __(messages.MIGRATED_TO_LATEST, 2, 1), true];
 			// latest and rollback are run by creating a db connection
@@ -409,7 +421,7 @@ describe('lib/Migrate', function() {
 			});
 		});
 
-		it('should just inform user that migration is up to date when all migrations hav been executed', function() {
+		it('latest - should just inform user that migration is up to date when all migrations have been executed', function() {
 			const runArgs = ['blue', messages.ALREADY_MIGRATED, true];
 			log.echo.resetHistory();
 			return migrate().run('latest', true).then(() => {
@@ -418,6 +430,42 @@ describe('lib/Migrate', function() {
 			});
 		});
 
+		it('rollback - should rollback executed migration files', function() {
+			log.echo.resetHistory();
+			const fileList = ['2018_12_08_02_02', '2018_12_08_02_03'].map(
+				el => `${FAKE_DIR}/migrations/${el}.yml`
+			);
+			const runArgs = [
+				[
+					'blue', __( messages.ROLLBACKING, 2, 1, log.listify(fileList)), false
+				],
+				[
+					'green', __( messages.ROLLBACKED_MIGRATIONS, 2, 1), true
+				]
+			];
+			return migrate().run('rollback', true).then(() => {
+				expect(log.echo.getCalls().length).to.eql(2);
+				runArgs.forEach((item, i) => {
+					expect(log.echo.getCall(i).args).to.eql(item);
+				});
+			});
+		});
+
+		it('rollback - should inform user that there is no unexecuted migration file!', function() {
+			log.echo.resetHistory();
+			const expectedMessage = ['blue', messages.NO_ROWS_TO_ROLLBACK, true];
+			return migrate().run('rollback', true).then(() => {
+				expect(log.echo.getCalls().length).to.eql(1);
+				expect(log.echo.getCall(0).args).to.eql(expectedMessage);
+			});
+		});
+
+		it('latest - should run rollbacked migarations in normal mode', function() {
+			const instance = migrate();
+			return instance.run('latest', false).then(() => {
+				return instance.run('rollback', false);
+			});
+		});
 	});
 
 });

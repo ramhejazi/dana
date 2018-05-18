@@ -1,7 +1,7 @@
 /*global after, before*/
 
 const helpers = require('../../../src/lib/helpers')
-	, mockFs = require('mock-fs')
+	, mocker = require('../_mocker')
 	, expect = require('expect.js');
 
 describe('lib/helpers', function() {
@@ -43,31 +43,9 @@ describe('lib/helpers', function() {
 		});
 	});
 
-	describe('.normalizeFiles()', function() {
-		it('should convert each passed array element into an object', function() {
-			const input = [
-				'/home/user/filename.js',
-				'/home/user/dir/another_file.yml'
-			];
-			const output = [{
-				name: 'filename',
-				ext: 'js',
-				path: '/home/user/filename.js',
-				src: undefined
-			}, {
-				name: 'another_file',
-				ext: 'yml',
-				path: '/home/user/dir/another_file.yml',
-				src: undefined
-			}];
-			const returned = helpers.normalizeFiles(input, false);
-			expect(returned).to.eql(output);
-		});
-	});
-
 	describe('.requireDirFiles()', function() {
 		before(function() {
-			mockFs({
+			mocker.mockFs({
 				'/test_directory': {
 					'js_file.js': 'module.exports="js file content"',
 					'js_file2.js': 'module.exports="second js file content"'
@@ -76,23 +54,23 @@ describe('lib/helpers', function() {
 		});
 
 		after(function() {
-			mockFs.restore();
+			mocker.unMockFs();
 		});
 
 		it('should read dir files correctly', function() {
-			return helpers.requireDirFiles('/test_directory/*', false).then(function(normalizedFiles) {
+			return helpers.requireDirFiles('/test_directory/*', true).then(function(normalizedFiles) {
 				expect(normalizedFiles).to.eql([
 					{
 						name: 'js_file',
 						ext: 'js',
 						path: '/test_directory/js_file.js',
-						src: undefined
+						src: 'js file content'
 					},
 					{
 						name: 'js_file2',
 						ext: 'js',
 						path: '/test_directory/js_file2.js',
-						src: undefined
+						src: 'second js file content'
 					}
 				]);
 			});
@@ -101,7 +79,7 @@ describe('lib/helpers', function() {
 
 	describe('.readYamlFile()', function() {
 		before(function() {
-			mockFs({
+			mocker.mockFs({
 				'/test_directory': {
 					'yaml_file.yml': 'up: Up property value!'
 				}
@@ -109,13 +87,47 @@ describe('lib/helpers', function() {
 		});
 
 		after(function() {
-			mockFs.restore();
+			mocker.unMockFs();
 		});
 
 		it('should read and load the file correctly', function() {
 			return helpers.readYamlFile('/test_directory/yaml_file.yml').then(function(content) {
 				expect(content).to.eql({ up: 'Up property value!'});
 			});
+		});
+	});
+
+	describe('.normalizeFiles()', function() {
+		before(function() {
+			mocker.mockFs({
+				'/home/user': {
+					'filename.js': 'module.exports = "test"',
+					'another_file.js': 'module.exports = { "foo": 2 }'
+				}
+			});
+		});
+		after(function() {
+			mocker.unMockFs();
+		});
+
+		it('should convert each passed array element into an object', function() {
+			const input = [
+				'/home/user/filename.js',
+				'/home/user/another_file.js'
+			];
+			const output = [{
+				name: 'filename',
+				ext: 'js',
+				path: '/home/user/filename.js',
+				src: 'test'
+			}, {
+				name: 'another_file',
+				ext: 'js',
+				path: '/home/user/another_file.js',
+				src: { foo: 2 }
+			}];
+			const returned = helpers.normalizeFiles(input);
+			expect(returned).to.eql(output);
 		});
 	});
 });
