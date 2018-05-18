@@ -25,7 +25,7 @@ apt-get -y install mysql-server >> $LOG_FILE 2>&1
 
 echo -e "--- Setting up MySQL user and database ---"
 mysql -uroot -p$DB_ROOT_PASSWORD -e "CREATE DATABASE $DB_NAME" >> /vagrant/vm_build.log 2>&1
-mysql -uroot -p$DB_ROOT_PASSWORD -e "grant all privileges on $DB_NAME.* to '$DB_USER'@'localhost' identified by '$DB_USER_PASS'" >> $LOG_FILE 2>&1
+mysql -uroot -p$DB_ROOT_PASSWORD -e "GRANT ALL PRIVILEGES ON $DB_NAME.* TO '$DB_USER'@'localhost' IDENTIFIED BY '$DB_USER_PASS'" >> $LOG_FILE 2>&1
 
 echo -e "--- Installing nodejs v8 ---"
 curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash - >> $LOG_FILE 2>&1
