@@ -8,6 +8,7 @@ node_js:
 
 addons:
   apt:
+    update: true
     sources:
       - mysql-5.7-trusty
     packages:
