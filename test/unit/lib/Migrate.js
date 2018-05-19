@@ -211,7 +211,7 @@ describe('lib/Migrate', function() {
 		it('sibling method ._runWithConnection() should catch mysql connection error, log it and exit the process after!', function() {
 			const instance = migrate();
 			instance.dana.__configs.connection = { user: 'nonexistent' };
-			instance._runWithConnection().catch(e => {
+			return instance._runWithConnection().catch(e => {
 				expect(e.message).to.eql('DB_CONNECTION_ERROR');
 			});
 		});
