@@ -1,8 +1,11 @@
-dana - database migration program
+dana
 =====
+
+[![Travis](https://img.shields.io/travis/ramhejazi/dana.svg)](https://travis-ci.org/ramhejazi/dana)
 [![npm version](https://img.shields.io/npm/v/dana.svg?style=flat-square)](https://www.npmjs.com/package/dana)
 [![npm downloads](https://img.shields.io/npm/dt/dana.svg?style=flat-square)](https://www.npmjs.com/package/dana)
-![npm license](https://img.shields.io/npm/l/express.svg)
+[![Coverage Status](https://coveralls.io/repos/github/ramhejazi/dana/badge.svg)](https://coveralls.io/github/ramhejazi/dana)
+[![npm license](https://img.shields.io/npm/l/dana.svg)](https://github.com/ramhejazi/dana/blob/master/LICENSE)
 
 
  > dana is a database (currently, only MySQL) migration program written in JavaScript (node.js). It works by _tracking changes_ in models and _auto-generating_ and _executing_ migration files.
