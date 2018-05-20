@@ -75,7 +75,7 @@ Generates model for the specified table names. The table names are checked and v
 #### `dana migrate:make [options]`                          
 Tracks model specification changes and creates a new migration file. The command doesn't create a migration file when models are invalid or there is no schema change detected.
 
-#### `migrate:latest [options]`                          
+#### `dana migrate:latest [options]`                          
 Executes all non-executed migration files. All executed migration files are labeled by a batch number which is used during rollbacking the migration files.
 
 
