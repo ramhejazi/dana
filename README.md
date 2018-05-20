@@ -1,38 +1,46 @@
-dana
-=====
-
+<div align="center">
+<h1>dana</h1>
 [![Travis](https://img.shields.io/travis/ramhejazi/dana.svg)](https://travis-ci.org/ramhejazi/dana)
 [![npm version](https://img.shields.io/npm/v/dana.svg?style=flat-square)](https://www.npmjs.com/package/dana)
 [![npm downloads](https://img.shields.io/npm/dt/dana.svg?style=flat-square)](https://www.npmjs.com/package/dana)
 [![Coverage Status](https://coveralls.io/repos/github/ramhejazi/dana/badge.svg)](https://coveralls.io/github/ramhejazi/dana)
 [![npm license](https://img.shields.io/npm/l/dana.svg)](https://github.com/ramhejazi/dana/blob/master/LICENSE)
+</div>
+
+> `dana` is a _simple_, _small_ and _framework-agnostic_ database migration tool (CLI) written in JavaScript (node.js).
 
 
- > dana is a database (currently, only MySQL) migration program written in JavaScript (node.js). It works by _tracking changes_ in models and _auto-generating_ and _executing_ migration files.
+`dana` works like git somehow. It _tracks_ changes in user-defined models – simple JavaScript objects representing database tables – and _generates_ migration files.   
 
-Yet another database migration library? It's somehow different. Nearly all database migration libraries/tools work with user-generated migration files. dana auto-generates the migration files. Where does it get the data? User-defined models. You change the models, it tracks the changes and then creates a new migration file!
+Key notes:
+
+- Simple to learn, in fact, **no APIs to learn**. `dana` _auto-generates_ migration files. User just need to create models and run simple commands.
+- Models are **validated**. Migration files are generated only when models are valid!
+- Generates formatted, readable SQL.
+- Migrations files are created by using [YAML](http://yaml.org) – a human-readable data serialization language.
+- Supports rollbacking. Generated migration files contain required SQL for downgrading to previous state.
+- Migration files also contain snapshot of current database structure.
+- Currently, it **only supports MySQL** database.
+- Supports all mysql data types, excluding [Spatial](https://dev.mysql.com/doc/refman/5.7/en/spatial-type-overview.html) and [JSON](https://dev.mysql.com/doc/refman/5.7/en/json.html).
+
 
 ## Table of contents:
 - [Installation](#installation)
-- [Notable Features](#notable-features-and-limitations)
 - [Getting Started](https://github.com/ramhejazi/dana/blob/master/docs/getting_started.md)
 - [Datatypes](https://github.com/ramhejazi/dana/blob/master/docs/datatypes.md)
 - [CLI Commands](#cli-commands)
 - [Examples](#examples)
 
 ## Installation
+Via [npm](https://docs.npmjs.com/getting-started/what-is-npm):
 ```bash
 npm i -g dana
 ```
 
-## Notable Features and Limitations
-- It automatically creates SQL by tracking user-defined models. The goal is facilitating the process of database migration.
-- dana can execute and rollback it's own generated migration files.
-- It doesn't support column renaming. When a column name (a property of `schema.columns`) is changed, the column is dropped and a SQL for creating a new column is generated.
-- dana manages table indexes.
-- dana currently **doesn't** manage/support foreign keys!
-- It automatically creates an auto-incrementing primary key (an `id` column) for each table. This means usage of `id` as column name is not allowed.
-- Model files are **validated** before generating migration files. dana doesn't create migration files when models are not valid.
+Via [yarn](https://yarnpkg.com/en/) package manager:
+```bash
+yarn global add dana
+```
 
 ## Commands
 Usage: `dana [options] [command]`
