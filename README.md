@@ -1,10 +1,20 @@
 <div align="center">
-<h1>dana</h1>
-[![Travis](https://img.shields.io/travis/ramhejazi/dana.svg)](https://travis-ci.org/ramhejazi/dana)
-[![npm version](https://img.shields.io/npm/v/dana.svg?style=flat-square)](https://www.npmjs.com/package/dana)
-[![npm downloads](https://img.shields.io/npm/dt/dana.svg?style=flat-square)](https://www.npmjs.com/package/dana)
-[![Coverage Status](https://coveralls.io/repos/github/ramhejazi/dana/badge.svg)](https://coveralls.io/github/ramhejazi/dana)
-[![npm license](https://img.shields.io/npm/l/dana.svg)](https://github.com/ramhejazi/dana/blob/master/LICENSE)
+	<h1>dana</h1>
+	<a href="https://travis-ci.org/ramhejazi/dana">
+ 		<img src="https://img.shields.io/travis/ramhejazi/dana.svg">
+	</a>
+	<a href="https://www.npmjs.com/package/dana">
+		<img alt="dana npm version" src="https://img.shields.io/npm/v/dana.svg?style=flat-square">
+	</a>
+	<a href="https://www.npmjs.com/package/dana">
+		<img alt="dana downloads count" src="https://img.shields.io/npm/dt/dana.svg?style=flat-square">
+	</a>
+	<a href="https://coveralls.io/github/ramhejazi/dana">
+		<img alt="dana coverage status" src="https://coveralls.io/repos/github/ramhejazi/dana/badge.svg">
+	</a>
+	<a href="https://github.com/ramhejazi/dana/blob/master/LICENSE">
+		<img alt="dana license" src="https://img.shields.io/npm/l/dana.svg">
+	</a>
 </div>
 
 > `dana` is a _simple_, _small_ and _framework-agnostic_ database migration tool (CLI) written in JavaScript (node.js).
