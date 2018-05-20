@@ -32,7 +32,7 @@ Key notes:
 - Supports rollbacking. Generated migration files contain required SQL for downgrading to previous state.
 - Migration files also contain snapshot of current database structure.
 - Currently, it **only supports MySQL** database.
-- Supports all mysql data types, excluding [Spatial](https://dev.mysql.com/doc/refman/5.7/en/spatial-type-overview.html) and [JSON](https://dev.mysql.com/doc/refman/5.7/en/json.html).
+- Supports all MySQL data types, excluding [Spatial](https://dev.mysql.com/doc/refman/5.7/en/spatial-type-overview.html) and [JSON](https://dev.mysql.com/doc/refman/5.7/en/json.html).
 
 
 ## Table of contents:
@@ -52,27 +52,38 @@ Via [yarn](https://yarnpkg.com/en/) package manager:
 ```bash
 yarn global add dana
 ```
+## Docs
 
-## Commands
+### Commands:
 Usage: `dana [options] [command]`
 
-Options:
+#### Options:
 
     -V, --version      output the version number
-    --danafile [path]  Specify the danafile path.
-    --cwd [path]       Specify the working directory.
-    --env [name]       environment, default: process.env.NODE_ENV || development
     -h, --help         output usage information
+    --danafile [path]  specify the danafile path.
+    --cwd [path]       specify the working directory.
+    --env [name]       environment, default: process.env.NODE_ENV || development
 
 
-Commands:
+#### `dana init [options]`                                    
+Creates a fresh `danafile.js` and missing directories: `models` and `migrations`.
 
-    init [options]                                    Create a fresh "danafile" and missing directories.
-    schema:generate [options] [tables...]             Generate models for the specified table names.
-    migrate:make [options]                            Track table specification changes and create migration files.
-    migrate:latest [options]                          Migrate migration files to the latest version.
-    migrate:rollback [options]                        Rollback migrated migration files.
-    datatype|dt [options] [types...]                  Get details about supported MySQL datatypes. Example: `dana dt varchar`
+#### `dana schema:generate [options] [tables...]`             
+Generates model for the specified table names. The table names are checked and validated before creating models.
+
+#### `dana migrate:make [options]`                          
+Tracks model specification changes and creates a new migration file. The command doesn't create a migration file when models are invalid or there is no schema change detected.
+
+#### `migrate:latest [options]`                          
+Executes all non-executed migration files. All executed migration files are labeled by a batch number which is used during rollbacking the migration files.
+
+
+#### `dana migrate:rollback [options]`                        
+Rollbacks migrated migration files by executing SQL stored in `down` sections of migration files.
+
+#### `dana datatype|dt [options] [types...]`                  
+Shows details about supported MySQL datatypes. Example: `dana dt varchar`.
 
 ## Examples:
 
