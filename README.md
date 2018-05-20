@@ -16,6 +16,7 @@
 		<img alt="dana license" src="https://img.shields.io/npm/l/dana.svg">
 	</a>
 </div>
+<br>
 
 > `dana` is a _simple_, _small_ and _framework-agnostic_ database migration tool (CLI) written in JavaScript (node.js).
 
