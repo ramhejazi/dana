@@ -35,7 +35,7 @@ Key notes:
 - Supports all MySQL data types, excluding [Spatial](https://dev.mysql.com/doc/refman/5.7/en/spatial-type-overview.html) and [JSON](https://dev.mysql.com/doc/refman/5.7/en/json.html).
 
 
-## Table of contents:
+## Contents
 - [Installation](#installation)
 - [Getting Started](https://github.com/ramhejazi/dana/blob/master/docs/getting_started.md)
 - [Datatypes](https://github.com/ramhejazi/dana/blob/master/docs/datatypes.md)
@@ -52,9 +52,7 @@ Via [yarn](https://yarnpkg.com/en/) package manager:
 ```bash
 yarn global add dana
 ```
-## Docs
-
-### Commands:
+## Commands:
 Usage: `dana [options] [command]`
 
 #### Options:
@@ -66,21 +64,24 @@ Usage: `dana [options] [command]`
     --env [name]       environment, default: process.env.NODE_ENV || development
 
 
-#### `dana init [options]`                                    
+### `dana init`                                    
 Creates a fresh `danafile.js` and missing directories: `models` and `migrations`.
 
-#### `dana schema:generate [options] [tables...]`             
+### `dana schema:generate [tables...]`             
 Generates model for the specified table names. The table names are checked and validated before creating models.
 
-#### `dana migrate:make [options]`                          
+### `dana migrate:make`                          
 Tracks model specification changes and creates a new migration file. The command doesn't create a migration file when models are invalid or there is no schema change detected.
 
-#### `dana migrate:latest [options]`                          
+### `dana migrate:latest`                          
 Executes all non-executed migration files. All executed migration files are labeled by a batch number which is used during rollbacking the migration files.
 
 
-#### `dana migrate:rollback [options]`                        
+### `dana migrate:rollback`                        
 Rollbacks migrated migration files by executing SQL stored in `down` sections of migration files.
 
-#### `dana datatype|dt [options] [types...]`                  
+### `dana datatype|dt [types...]`                  
 Shows details about supported MySQL datatypes. Example: `dana dt varchar`.
+
+## License
+[MIT](https://github.com/ramhejazi/dana/blob/master/LICENSE)
