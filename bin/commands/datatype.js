@@ -1,4 +1,6 @@
 const _ = require('lodash');
+const inspect = require('util').inspect;
+const chalk = require('chalk');
 
 module.exports = {
 	cmd: 'datatype [types...]',
@@ -8,23 +10,26 @@ module.exports = {
 		['-a, --all', 'Outputs all datatypes']
 	],
 	handler(argv, util, fields) {
+		const log = util.log;
 		if (fields.length === 0 && !this.all ) {
 			return this.help();
 		}
-		const dana = util.getDanaIns();
+		const dana = util.getDanaIns(false);
 		const dtNames = Object.keys(dana.datatypes);
 		if ( this.all ) {
-			return util.log.info(dtNames.join('\n'));
+			return log.info(dtNames.join('\n'));
 		}
 		const unknownTypes = _.without(fields, ...dtNames);
 		if (unknownTypes.length) {
-			util.log.warn('Unknown Type(s): ' + unknownTypes.join(', '));
+			log.warn('Unsupported type(s): ' + util.log.listify(unknownTypes), true);
 		}
 		const types = _.pick(dana.datatypes, fields);
-		_.each(types, (value, key) => {
-			const defaults = (value.defaults);
-			util.log.info(`${key}`);
-			util.log.info(JSON.stringify(defaults, null, 4));
-		});
+		const ret = Object.keys(types).reduce((ret, el) => {
+			const cDefaults = inspect({ defaults: types[el].defaults }, { colors: true }).replace(/[{}]/g, ' ');
+			ret.push(`${chalk.bold(el)}:\n${cDefaults}`);
+			return ret;
+		}, []);
+
+		console.log( chalk.blue(ret.join('\n')) );
 	}
 };

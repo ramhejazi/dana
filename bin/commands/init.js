@@ -1,4 +1,4 @@
-const dana = require('../../src/dana');
+const Dana = require('../../src/dana');
 
 module.exports = {
 	cmd: 'init',
@@ -9,7 +9,7 @@ module.exports = {
 	handler(argv, util) {
 		const verbose = !!this.verbose;
 		const baseDir = util.env.cwd;
-		return dana({
+		return Dana({
 			baseDir
 		}).schema.init(verbose);
 	}

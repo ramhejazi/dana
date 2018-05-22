@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 const Liftoff 				= require('liftoff')
+	, Dana              = require('../src/dana')
 	, ValidationError 	= require('mitra').ValidationError
 	, _ 								= require('lodash')
 	, fs 								= require('fs-extra')
@@ -86,37 +87,40 @@ const util = {
 	* @todo validate danafile contents!
  	* @return {object} a dana instance
  	*/
-	getDanaIns() {
+	getDanaIns(needsConfig = true) {
+		const environment  = ( commander.env || process.env.NODE_ENV || 'development' );
+
+		if ( !needsConfig ) {
+			return Dana({}, environment);
+		}
+
 		const env = this.env;
 
 		// REMOVING LOCAL DEPENDENCY! Reason: Why does it have to be unnecessarily complicated?
 		// this.ensureLocalModule();
 
 		if ( !env.configPath ) {
-			log.fail('no dana configuration file (danafile.js) found in this directory. run `dana init` for generating one or specify a path with --danafile', true);
+			log.fail('No dana configuration file (danafile.js) found in this directory. run `dana init` for generating one or specify a path with --danafile', true);
 		}
 
 		if ( process.cwd() !== env.cwd ) {
 			process.chdir(env.cwd);
-			log.info('working directory changed to ' + chalk.magenta(tildify(env.cwd)));
+			log.info('Working directory changed to ' + chalk.magenta(tildify(env.cwd)));
 		}
 
-		const
-			environment  = ( commander.env || process.env.NODE_ENV || 'development' )
-			, danaFile = require(env.configPath);
+		const danaFile = require(env.configPath);
 
 		const config = danaFile[environment];
 
 		if (!config) {
-			log.fail(`unable to read danafile configuration for "${environment}"!`, true);
+			log.fail(`Unable to read danafile configuration for "${environment} environment"!`, true);
 		}
 
 		if (argv.debug !== undefined) config.debug = argv.debug;
 		// use the current globally installed dana!
-		var dana = require('../src/dana');
 		// config.modulePath = env.modulePath;
 		config.baseDir = env.cwd;
-		return dana(config, environment);
+		return Dana(config, environment);
 	}
 };
 
