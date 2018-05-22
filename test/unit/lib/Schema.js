@@ -1,5 +1,6 @@
 const
 	Schema = require('../../../src/lib/Schema')
+	, Table = require('../../../src/lib/Table')
 	, expect = require('expect.js')
 	, fs = require('fs-extra')
 	, messages = require('../../../src/messages/en').schema
@@ -250,7 +251,8 @@ describe('lib/Schema', function() {
 			const logItem = [
 				'red', __(
 					messages.INAVLID_TABLE_NAMES,
-					log.listify(tableNames.slice(1))
+					log.listify(tableNames.slice(1)),
+					Table.getNameRegex()
 				), true
 			];
 			log.echo.resetHistory();

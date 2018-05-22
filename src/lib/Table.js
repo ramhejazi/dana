@@ -125,6 +125,14 @@ class Table {
 	static isValidName(value) {
 		return mitra.checkSync(value, 'sql_table_name').valid;
 	}
+
+	/**
+	 * Get regular expression used in validating table names
+	 * made to be used in logging related error(s)
+	 */
+	static getNameRegex() {
+		return mitra._validators.sql_table_name.regex;
+	}
 }
 
 module.exports = Table;

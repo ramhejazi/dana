@@ -3,6 +3,7 @@ const regex = /^[a-z]([_]?[a-z]+)*$/;
 module.exports = {
 	title: 'sql_table_name',
 	description: 'Validates table names!',
+	regex,
 	valids: [
 		'table_name', 't', 'tbl_name_two', 'column_name', 'c_one'
 	],

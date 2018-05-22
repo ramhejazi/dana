@@ -151,7 +151,8 @@ module.exports = class Schema {
 		if ( invalids.length ) {
 			log.fail(__(
 				messages.INAVLID_TABLE_NAMES,
-				log.listify(invalids)
+				log.listify(invalids),
+				Table.getNameRegex()
 			), true);
 			// uncessary as the log.fail will terminate the process
 			// just for the sake of testing!
