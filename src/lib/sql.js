@@ -32,7 +32,7 @@ module.exports = {
 	getColumnSQL(col) {
 		const dt = datatypes[col.type];
 		if (!dt) {
-			throw new Error(`Unknown datatype "${col}"!`);
+			throw new Error(`Unknown Data Type "${col}"!`);
 		}
 		return dt.generateSQL(col);
 	},
@@ -62,9 +62,10 @@ module.exports = {
 	},
 
 	createIndex(tbl, index) {
-		const name = tbl + '_' + index.columns.join('_');
-		const type = index.type === 'index' ? '' : ` ${index.type}`;
-		return `ALTER TABLE \`${tbl}\` ADD${type.toUpperCase()} INDEX \`${name}\` (${index.columns.join(',')});`;
+		const INDEX_NAME = tbl + '_' + index.columns.join('_');
+		const INDEX_TYPE = (index.type === 'index') ? 'INDEX' : `${index.type.toUpperCase()} INDEX`;
+		const COLUMNS =  index.columns.map(col => col.replace(/([a-z_]+)/, '`$1`')).join();
+		return `ALTER TABLE \`${tbl}\` ADD ${INDEX_TYPE} \`${INDEX_NAME}\` (${COLUMNS});`;
 	},
 
 	dropIndex(tbl, index) {
