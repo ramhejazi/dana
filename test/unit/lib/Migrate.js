@@ -378,7 +378,7 @@ describe('lib/Migrate', function() {
 	});
 
 
-	describe('_latest() && _rollback()', function() {
+	describe('Migration functions', function() {
 		before(function() {
 			const firstFile = new Diff([], [
 				{
@@ -391,9 +391,12 @@ describe('lib/Migrate', function() {
 							}
 							return ret;
 						}, {}),
-						index: [{
+						indexes: [{
 							type: 'index',
-							columns: ['varchar']
+							columns: ['varchar(5)', 'char']
+						}, {
+							type: 'fulltext',
+							columns: ['text']
 						}]
 					},
 					_fid: 'aaa'
@@ -420,7 +423,7 @@ describe('lib/Migrate', function() {
 			mocker.unMockFs();
 		});
 
-		it('latest - should run remaining migration files', function() {
+		it('- latest() should run remaining migration files', function() {
 			const instance = migrate();
 			const runArgs = ['green', __(messages.MIGRATED_TO_LATEST, 2, 1), true];
 			// latest and rollback are run by creating a db connection
@@ -438,7 +441,7 @@ describe('lib/Migrate', function() {
 			});
 		});
 
-		it('latest - should just inform user that migration is up to date when all migrations have been executed', function() {
+		it('- latest() should just inform user that migration is up to date when all migrations have been executed', function() {
 			const runArgs = ['blue', messages.ALREADY_MIGRATED, true];
 			log.echo.resetHistory();
 			return migrate().run('latest', true).then(() => {
@@ -447,7 +450,7 @@ describe('lib/Migrate', function() {
 			});
 		});
 
-		it('rollback - should rollback executed migration files', function() {
+		it('- rollback() should rollback executed migration files', function() {
 			log.echo.resetHistory();
 			const fileList = ['2018_12_08_02_02', '2018_12_08_02_03'].map(
 				el => `${FAKE_DIR}/migrations/${el}.yml`
@@ -468,7 +471,7 @@ describe('lib/Migrate', function() {
 			});
 		});
 
-		it('rollback - should inform user that there is no unexecuted migration file!', function() {
+		it('- rollback() should inform user that there is no unexecuted migration file!', function() {
 			log.echo.resetHistory();
 			const expectedMessage = ['blue', messages.NO_ROWS_TO_ROLLBACK, true];
 			return migrate().run('rollback', true).then(() => {
@@ -477,7 +480,7 @@ describe('lib/Migrate', function() {
 			});
 		});
 
-		it('latest - should run rollbacked migarations in normal mode', function() {
+		it('- latest() should run rollbacked migarations in normal mode', function() {
 			const instance = migrate();
 			return instance.run('latest', false).then(() => {
 				return instance.run('rollback', false);
