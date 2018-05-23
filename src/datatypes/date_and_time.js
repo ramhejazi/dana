@@ -46,7 +46,7 @@ module.exports = {
 			fsp: 'sql_fsp'
 		},
 		generateSQL(d) {
-			let sql = [`TIME(${d.fsp})`];
+			let sql = ['TIME'];
 			if ( d.nullable === false ) {
 				sql.push('NOT NULL');
 			}

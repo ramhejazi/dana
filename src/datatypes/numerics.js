@@ -149,8 +149,8 @@ function integer(params) {
 	};
 
 	return {
-		category: 'numeric',
-		sub_category: 'integer',
+		category: 'Numeric',
+		sub_category: 'Integer',
 		defaults,
 		rules,
 		generateSQL(d) {
@@ -199,7 +199,7 @@ function fixedFloating(params, sub_category = 'Fixed') {
 		comment: 'sql_comment'
 	};
 	return {
-		category: 'numeric',
+		category: 'Numeric',
 		sub_category: `${sub_category}-Point`,
 		rules,
 		defaults,

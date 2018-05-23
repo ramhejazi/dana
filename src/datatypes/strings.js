@@ -44,7 +44,8 @@ function enumSet(type) {
 		defaults,
 		category: 'String',
 		generateSQL(d) {
-			let sql = [`${d.type.toUpperCase()}(${d.options.join()})`];
+			let options = d.options.map(el => `'${el}'`).join(',');
+			let sql = [`${d.type.toUpperCase()}(${options})`];
 			if ( d.nullable === false ) {
 				sql.push('NOT NULL');
 			}

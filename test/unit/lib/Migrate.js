@@ -2,6 +2,7 @@ const
 	Migrate = require('../../../src/lib/Migrate')
 	, Schema = require('../../../src/lib/Schema')
 	, Table = require('../../../src/lib/Table')
+	, datatypes = require('../../../src/datatypes')
 	, Diff = require('../../../src/lib/Diff')
 	, Promise = require('bluebird')
 	, expect = require('expect.js')
@@ -380,7 +381,23 @@ describe('lib/Migrate', function() {
 	describe('_latest() && _rollback()', function() {
 		before(function() {
 			const firstFile = new Diff([], [
-				Schema.defineBaseModel('posts', true)
+				{
+					tableName: 'posts',
+					schema: {
+						columns: Object.keys(datatypes).reduce((ret, dtName) => {
+							ret[dtName] = datatypes[dtName].defaults;
+							if ( ['enum', 'set'].includes(dtName) ) {
+								ret[dtName].options = ['example_value'];
+							}
+							return ret;
+						}, {}),
+						index: [{
+							type: 'index',
+							columns: ['varchar']
+						}]
+					},
+					_fid: 'aaa'
+				}
 			]).getMigrationData();
 
 			const secondFile = new Diff([], [

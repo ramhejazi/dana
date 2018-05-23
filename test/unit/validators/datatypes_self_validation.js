@@ -51,7 +51,7 @@ const examples = {
 			comment: 'a comment added for `set` field!',
 			options: ['foo', 'bar'],
 		},
-		sql: 'SET(foo,bar) NOT NULL DEFAULT \'bar\' CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci COMMENT \'a comment added for `set` field!\''
+		sql: 'SET(\'foo\',\'bar\') NOT NULL DEFAULT \'bar\' CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci COMMENT \'a comment added for `set` field!\''
 	},
 	'bit': {
 		params: {
@@ -106,7 +106,7 @@ const examples = {
 			fsp: 0,
 			comment: 'a comment for time field!'
 		},
-		sql: 'TIME(0) NOT NULL DEFAULT \'1112\' COMMENT \'a comment for time field!\''
+		sql: 'TIME NOT NULL DEFAULT \'1112\' COMMENT \'a comment for time field!\''
 	},
 	'datetime': {
 		params: {
