@@ -34,6 +34,27 @@ Key notes:
 - Currently, it **only supports MySQL** database.
 - Supports all MySQL data types, excluding [Spatial](https://dev.mysql.com/doc/refman/5.7/en/spatial-type-overview.html) and [JSON](https://dev.mysql.com/doc/refman/5.7/en/json.html).
 
+### Differences with other migration libraries:
+There are some popular and stable migration libraries:
+- [Rails Framework's Active Record Migrations](http://guides.rubyonrails.org/active_record_migrations.html) (Ruby)
+- [Laravel Framework's Migration System](https://laravel.com/docs/5.6/migrations) (PHP)
+- [knex query builder's Migrations](http://knexjs.org/#Migrations) (JavaScript)
+
+These tools provide APIs for defining/redefining database schemata. User creates migration files and uses these APIs for creating/editing/deleting tables, columns, indices and foreign keys. User also needs to code by using these APIs for reversing/undoing all the schema modifications for rollbacks.
+
+`dana` doesn't provide such APIs. It generates migration files by tracking and analyzing user-defined models. User creates/edits/deletes models (one model for each table), executes a CLI command (`dana migrate:make`) and a new migration file is generated.
+
+#### Pros:
+- No APIs to learn/remember!
+- Faster development.
+- Migration files' `up` and `down` sections only contain SQL.
+- Makes checking database structure easier.
+
+#### Cons:
+- `dana` is still in its infancy!
+- Currently only supports MySQL. Mentioned libraries support other SQL databases like Postgres,  Microsoft SQL Server, SQLite, and Oracle! (Support varies)
+- Currently doesn't support foreign key constraints!
+
 
 ## Contents
 - [Installation](#installation)
