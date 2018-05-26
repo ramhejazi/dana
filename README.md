@@ -48,18 +48,18 @@ An example for `dana` models:
 ```js
 module.exports = {
   tableName: 'posts',
-    schema: {
-      columns: {
-        'title': { type: 'varchar', nullable: false, comment: 'a comment!' },
-        'slug': 'varchar',
-        'author_id': 'int',
-        'created_at': 'datetime',
-        'updated_at': 'datetime'
-      },
-      indexes: [{
-        type: 'unique',
-        columns: ['title']
-      }]
+  schema: {
+    columns: {
+      'title': { type: 'varchar', nullable: false, comment: 'a comment!' },
+      'slug': 'varchar',
+      'author_id': 'int',
+      'created_at': 'datetime',
+      'updated_at': 'datetime'
+    },
+    indexes: [{
+      type: 'unique',
+      columns: ['title']
+    }]
   },
   _fid: "sybwcf_tg"
 }
