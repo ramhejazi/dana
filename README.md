@@ -47,21 +47,21 @@ These tools provide APIs for defining/redefining database schemata. User creates
 An example for `dana` models:
 ```js
 module.exports = {
-	tableName: 'posts',
-	schema: {
-		columns: {
-			'title': { type: 'varchar', nullable: false, comment: 'a comment!' },
-			'slug': 'varchar',
-			'author_id': 'int',
-			'created_at': 'datetime',
-			'updated_at': 'datetime'
-		},
-		indexes: [{
-			type: 'unique',
-			columns: ['title']
-		}]
-	},
-	_fid: "sybwcf_tg"
+  tableName: 'posts',
+    schema: {
+      columns: {
+        'title': { type: 'varchar', nullable: false, comment: 'a comment!' },
+        'slug': 'varchar',
+        'author_id': 'int',
+        'created_at': 'datetime',
+        'updated_at': 'datetime'
+      },
+      indexes: [{
+        type: 'unique',
+        columns: ['title']
+      }]
+  },
+  _fid: "sybwcf_tg"
 }
 ```
 
@@ -79,8 +79,7 @@ up: |-
   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
   ALTER TABLE `posts` ADD UNIQUE INDEX `posts_title` (`title`);
 down: DROP TABLE `posts`;
-specs: >-
-  [{"tableName":"posts", ...
+specs: ...
 ```
 
 #### Pros:
