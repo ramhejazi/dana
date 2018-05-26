@@ -44,6 +44,45 @@ These tools provide APIs for defining/redefining database schemata. User creates
 
 `dana` doesn't provide such APIs. It generates migration files by tracking and analyzing user-defined models. User creates/edits/deletes models (one model for each table), executes a CLI command (`dana migrate:make`) and a new migration file is generated.
 
+An example for `dana` models:
+```js
+module.exports = {
+	tableName: 'posts',
+	schema: {
+		columns: {
+			'title': { type: 'varchar', nullable: false, comment: 'a comment!' },
+			'slug': 'varchar',
+			'author_id': 'int',
+			'created_at': 'datetime',
+			'updated_at': 'datetime'
+		},
+		indexes: [{
+			type: 'unique',
+			columns: ['title']
+		}]
+	},
+	_fid: "sybwcf_tg"
+}
+```
+
+An example for `dana` migration files:
+```yaml
+up: |-
+  CREATE TABLE `posts` (
+    `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+    `title` VARCHAR(255) NOT NULL COMMENT 'a comment!',
+    `slug` VARCHAR(255),
+    `author_id` INT(11),
+    `created_at` DATETIME,
+    `updated_at` DATETIME,
+    PRIMARY KEY (`id`)
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  ALTER TABLE `posts` ADD UNIQUE INDEX `posts_title` (`title`);
+down: DROP TABLE `posts`;
+specs: >-
+  [{"tableName":"posts", ...
+```
+
 #### Pros:
 - No APIs to learn/remember!
 - Faster development.
@@ -54,7 +93,6 @@ These tools provide APIs for defining/redefining database schemata. User creates
 - `dana` is still in its infancy!
 - Currently only supports MySQL. Mentioned libraries support other SQL databases like Postgres,  Microsoft SQL Server, SQLite, and Oracle! (Support varies)
 - Currently doesn't support foreign key constraints!
-
 
 ## Contents
 - [Installation](#installation)
