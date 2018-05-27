@@ -97,7 +97,7 @@ specs: ...
 - [Installation](#installation)
 - [Setup](#setup)
 - [Models](#models)
-	- [Model Identifiers](#model-identifiers-_fid)
+	- [Model Identifiers](#model-identifiers)
 	- [Creating Tables](#creating-tables)
 	- [Renaming Tables](#renaming-tables)
 	- [Dropping Tables](#dropping-tables)
@@ -169,10 +169,10 @@ Each model can or must have these properties:
 - `schema.columns` (**required** `object`) - See [Defining Columns ]() section.
 - `schema.charset` (`string`) Table character set. Default: `'utf8mb4'`
 - `schema.collation` (`string`) Table collation. Default: `'utf8mb4_unicode_ci'`
-- `schema.indexes` (`array`) An array of objects. Each object is treated as an SQL index. See [Defining Indexes]() section.
+- `schema.indexes` (`array`) An array of objects. Each object is treated as an SQL index.
 - `_fid` (**required** `string`) An unique identifier for the model.
 
-#### Model Identifiers (`_fid`)
+#### Model Identifiers
 Each model **must** have an unique `_fid` property. `dana` relies on existence of these properties for keeping track of table modifications. You **must not** change the `_fid` properties of tracked models after running `migrate:make` command! Otherwise, the old table is **dropped** and a _new_ table is **created** as `dana` assumes the old model has been deleted and a new model has been created!
 
 > The `_fid` exists as there is no solid way to uniquely identify each file on different file systems!
