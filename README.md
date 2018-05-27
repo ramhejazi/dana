@@ -108,7 +108,7 @@ specs: ...
 	- [Creating Indexes](#creating-indexes)
 	- [Modifying Indexes](#modifying-indexes)
 	- [Dropping Indexes](#dropping-indexes)
-- [Migrations](#Migrations)
+- [Migrations](#migrations)
 - [Datatypes](https://github.com/ramhejazi/dana/blob/master/docs/datatypes.md)
 - [CLI Commands](#commands)
 - [Examples](https://github.com/ramhejazi/dana/blob/master/docs/exmaples.md)
