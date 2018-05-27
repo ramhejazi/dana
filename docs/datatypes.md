@@ -7,8 +7,7 @@ As an example, for defining a column as `varchar` field you can set the column v
 `{ type: 'varchar' }` (a plain object) or simply as a string `'varchar'`.
 
 In addition to the `type` property each datatype object may have several other properties
-which represent the MySQL attributes of datatypes. As an example `nullable` property specifies
-whether column should be `NULL` or `NOT NULL`.
+which represent the MySQL attributes of datatypes. As an example `nullable` property specifies column should be `NULL` or `NOT NULL`.
 
 ### String Types
 <ul>
@@ -208,7 +207,7 @@ whether column should be `NULL` or `NOT NULL`.
 </li>
 </ul>
 
-### numeric Types
+### Numeric Types
 #### Integer Types
 <ul>
 <li>
@@ -557,4 +556,3 @@ whether column should be `NULL` or `NOT NULL`.
 	</details>
 </li>
 </ul>
-
