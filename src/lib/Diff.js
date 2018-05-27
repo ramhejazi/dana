@@ -118,6 +118,7 @@ class Diff {
 	_diffTables(oTable, nTable) {
 		const oTableName = oTable.tableName;
 		const nTableName = nTable.tableName;
+		const tableNameHasChanged = oTableName !== nTableName;
 		const {
 			charset: nCharset,
 			collation: nCollation,
@@ -130,7 +131,7 @@ class Diff {
 			columns: oColumns
 		} = oTable.schema;
 
-		if ( oTableName !== nTableName ) {
+		if ( tableNameHasChanged ) {
 			this._renameTable('up', oTableName, nTableName);
 			this._renameTable('dn', nTableName, oTableName);
 		}
@@ -176,7 +177,7 @@ class Diff {
 	 * @param oTable The old table schema
 	 * @param nTable Possibly new schema of the table
 	 */
-	_diffTableIndexes(oTable, nTable) {
+	_diffTableIndexes(oTable, nTable, tableNameHasChanged) {
 		let oIndexes = oTable.schema.indexes || [];
 		let nIndexes = nTable.schema.indexes || [];
 		oIndexes.forEach(oindex => {
@@ -184,6 +185,9 @@ class Diff {
 			if (!findex) {
 				this._dropIndex('up', nTable.tableName, oindex);
 				this._createIndex('dn', oTable.tableName, oindex);
+			} else if (tableNameHasChanged) {
+				this._renameIndex('up', oTable.tableName, nTable.tableName, oindex );
+				this._renameIndex('dn', nTable.tableName, oTable.tableName, oindex );
 			}
 		});
 		nIndexes.forEach(nindex => {
@@ -204,7 +208,7 @@ class Diff {
 	_createTable(type, table) {
 		this[type] = this[type].concat(sql.createTable(table));
 		if ( type === 'up' ) {
-			this._log('info', `Creates table "${table.tableName}".`);
+			this._log('warn', `Creates table "${table.tableName}".`);
 		}
 	}
 
@@ -217,7 +221,7 @@ class Diff {
 	_dropTable(type, table) {
 		this[type].push(sql.dropTable(table.tableName));
 		if ( type === 'up' ) {
-			this._log('alert', `Drops table "${table.tableName}".`);
+			this._log('warn', `Drops table "${table.tableName}".`);
 		}
 	}
 
@@ -268,7 +272,7 @@ class Diff {
 	_renameTable(type, oTableName, nTableName) {
 		this[type].push(sql.renameTable(oTableName, nTableName));
 		if ( type === 'up' ) {
-			this._log('info', `Rename table "${oTableName}" to ${nTableName}`);
+			this._log('warn', `Rename table "${oTableName}" to ${nTableName}`);
 		}
 	}
 
@@ -282,8 +286,19 @@ class Diff {
 	_createIndex(type, tableName, index) {
 		this[type].push(sql.createIndex(tableName, index));
 		if ( type === 'up' ) {
-			this._log('info', `Creates "${index.type}" index on table "${tableName}".`);
+			this._log('warn', `Creates "${index.type}" index on table "${tableName}".`);
 		}
+	}
+
+	/**
+	 * Generate SQL for renaming an index
+	 * @param {string} type Type of operation: "up" or "dn"
+	 * @param {string} oTableName Old table name
+	 * @param {string} nTableName New table name
+	 * @param {object} index Index definition
+	 */
+	_renameIndex(type, oTableName, nTableName, index) {
+		this[type].push(sql.renameIndex(oTableName, nTableName, index));
 	}
 
 
@@ -296,7 +311,7 @@ class Diff {
 	_dropIndex(type, tableName, index) {
 		this[type].push(sql.dropIndex(tableName, index));
 		if ( type === 'up' ) {
-			this._log('alert', `Drops "${index.type}" index on table "${tableName}".`);
+			this._log('warn', `Drops "${index.type}" index on table "${tableName}".`);
 		}
 	}
 

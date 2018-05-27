@@ -62,15 +62,25 @@ module.exports = {
 	},
 
 	createIndex(tbl, index) {
-		const INDEX_NAME = tbl + '_' + index.columns.join('_');
+		const INDEX_NAME = this._getIndexName(tbl, index);
 		const INDEX_TYPE = (index.type === 'index') ? 'INDEX' : `${index.type.toUpperCase()} INDEX`;
 		const COLUMNS =  index.columns.map(col => col.replace(/([a-z_]+)/, '`$1`')).join();
 		return `ALTER TABLE \`${tbl}\` ADD ${INDEX_TYPE} \`${INDEX_NAME}\` (${COLUMNS});`;
 	},
 
+	renameIndex(oldTableName, newTableName, index) {
+		const OLD_INDEX_NAME = this._getIndexName(oldTableName, index);
+		const NEW_INDEX_NAME = this._getIndexName(newTableName, index);
+		return `ALTER TABLE \`${newTableName}\` RENAME INDEX \`${OLD_INDEX_NAME}\` TO \`${NEW_INDEX_NAME}\``;
+	},
+
 	dropIndex(tbl, index) {
 		const name = tbl + '_' + index.columns.join('_');
 		return `ALTER TABLE \`${tbl}\` DROP INDEX \`${name}\`;`;
+	},
+
+	_getIndexName(tbl, index) {
+		return tbl + '_' + index.columns.join('_');
 	}
 
 };
