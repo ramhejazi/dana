@@ -166,7 +166,7 @@ Each model can or must have these properties:
 
 - `tableName` (**required** `string`) Table name of the model
 - `schema` (**required** `object`)
-- `schema.columns` (**required** `object`) - See [Defining Columns ]() section.
+- `schema.columns` (**required** `object`)
 - `schema.charset` (`string`) Table character set. Default: `'utf8mb4'`
 - `schema.collation` (`string`) Table collation. Default: `'utf8mb4_unicode_ci'`
 - `schema.indexes` (`array`) An array of objects. Each object is treated as an SQL index.
