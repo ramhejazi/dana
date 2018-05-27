@@ -97,17 +97,17 @@ specs: ...
 - [Installation](#installation)
 - [Setup](#setup)
 - [Models](#models)
- - [Model Identifiers](#model-identifiers)
- - [Creating Tables](#creating-tables)
- - [Renaming Tables](#renaming-tables)
- - [Dropping Tables](#dropping-tables)
- - [Creating Columns](#creating-columns)
- - [Renaming Columns](#renaming-columns)
- - [Modifying Columns](#modifying-columns)
- - [Dropping Columns](#dropping-columns)
- - [Creating Indexes](#creating-indexes)
- - [Modifying Indexes](#modifying-indexes)
- - [Dropping Indexes](#dropping-indexes)
+		- [Model Identifiers](#model-identifiers-_fid)
+		- [Creating Tables](#creating-tables)
+		- [Renaming Tables](#renaming-tables)
+		- [Dropping Tables](#dropping-tables)
+		- [Creating Columns](#creating-columns)
+		- [Renaming Columns](#renaming-columns)
+		- [Modifying Columns](#modifying-columns)
+		- [Dropping Columns](#dropping-columns)
+		- [Creating Indexes](#creating-indexes)
+		- [Modifying Indexes](#modifying-indexes)
+		- [Dropping Indexes](#dropping-indexes)
 - [Migrations](#Migrations)
 - [Datatypes](https://github.com/ramhejazi/dana/blob/master/docs/datatypes.md)
 - [CLI Commands](#commands)
@@ -213,7 +213,7 @@ Example:
 ```
 See [Supported Data Types](https://github.com/ramhejazi/dana/blob/master/docs/datatypes.md) for more details.
 
-#### Renaming Tables
+#### Renaming Columns
 `dana` doesn't support table renaming operation as there is no way to detect which property has been changed without using an unique ID for each column (makes everything complicated) or guessing (will have unwanted side-effects).
 
 #### Modifying Columns
