@@ -18,12 +18,12 @@
 </div>
 <br>
 
-> `dana` is a _simple_, _small_ and _framework-agnostic_ database migration tool (CLI) written in JavaScript (node.js).
+> `dana` is a _simple_, _small_ and _framework-agnostic_ database schema migration utility (CLI) written in JavaScript (node.js).
 
 
 `dana` works like git somehow. It _tracks_ changes in user-defined models – simple JavaScript objects representing database tables – and _generates_ migration files.   
 
-Key notes:
+**Key notes**:
 
 - Simple to learn, in fact, **no APIs to learn**. `dana` _auto-generates_ migration files. User just need to create models and run simple commands.
 - Models are **validated**. Migration files are generated only when models are valid!
@@ -279,19 +279,19 @@ Usage: `dana [options] [command]`
 ### `dana init`
 Creates a fresh `danafile.js` and missing directories: `models` and `migrations`.
 
-### `dana schema:generate [tables...]`             
-Generates model for the specified table names. The table names are checked and validated before creating models.
+### `dana model:generate [tables...]`
+Generates model(s) for the specified table name(s). The table names are checked and validated before creating models.
 
-### `dana migrate:make`                          
+### `dana migrate:make`
 Tracks model specification changes and creates a new migration file. The command doesn't create a migration file when models are invalid or there is no schema change detected.
 
-### `dana migrate:latest`                          
+### `dana migrate:latest`
 Executes all non-executed migration files. All executed migration files are labeled by a batch number which is used during rollbacking the migration files.
 
-### `dana migrate:rollback`                        
+### `dana migrate:rollback`
 Rollbacks migrated migration files by executing SQL stored in `down` sections of migration files.
 
-### `dana datatype|dt [types...]`                  
+### `dana datatype [types...]`
 Shows details about supported MySQL datatypes. Example: `dana dt varchar`.
 
 ## License

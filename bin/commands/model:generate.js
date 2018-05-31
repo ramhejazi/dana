@@ -1,7 +1,7 @@
 module.exports = {
-	cmd: 'schema:generate [tables...]',
+	cmd: 'model:generate [tables...]',
 	description: 'Generates models for the specified table names.',
-	alias: 'schema:gen',
+	alias: 'model:gen',
 	options: [
 		['-v, --verbose', 'Logs all main actions.']
 	],
