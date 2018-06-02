@@ -12,6 +12,9 @@
 	<a href="https://coveralls.io/github/ramhejazi/dana">
 		<img alt="dana coverage status" src="https://coveralls.io/repos/github/ramhejazi/dana/badge.svg">
 	</a>
+	<a href="https://packagephobia.now.sh/badge?p=dana">
+		<img alt="dana installation size" src="https://packagephobia.now.sh/badge?p=dana">
+	</a>
 	<a href="https://github.com/ramhejazi/dana/blob/master/LICENSE">
 		<img alt="dana license" src="https://img.shields.io/npm/l/dana.svg">
 	</a>

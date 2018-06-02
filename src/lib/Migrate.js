@@ -1,18 +1,18 @@
-const Diff  = require('./Diff')
-	, _       = require('lodash')
-	, __         = require('util').format
-	, helpers = require('./helpers')
-	, fs      = require('fs-extra')
-	, path    = require('path')
-	, tildify = require('tildify')
-	, mysql   = require('mysql2/promise')
-	, chalk   = require('chalk')
-	, sql     = require('./sql')
-	, Promise = require('bluebird')
-	, messages   = require('../messages/en').migrate
-	, log     = require('./log')
-	, Table   = require('./Table')
-	, yaml    = require('js-yaml');
+const Diff   = require('./Diff')
+	, _        = require('lodash')
+	, __       = require('util').format
+	, helpers  = require('./helpers')
+	, fs       = require('fs-extra')
+	, path     = require('path')
+	, tildify  = require('tildify')
+	, mysql    = require('mysql2/promise')
+	, chalk    = require('chalk')
+	, sql      = require('./sql')
+	, Promise  = require('bluebird')
+	, messages = require('../messages/en').migrate
+	, log      = require('./log')
+	, Table    = require('./Table')
+	, yaml     = require('js-yaml');
 
 /**
 	@class responsible for creating, executing, rollbacking and basically
